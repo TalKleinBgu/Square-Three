@@ -921,8 +921,10 @@ function toggleRules() {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
             padding: 30px;
             border-radius: 20px;
-            max-width: 650px;
-            width: 90%;
+            max-width: 95vw;
+            width: 50%;
+            padding: ${window.innerWidth < 600 ? '15px' : '30px'};
+            font-size: ${window.innerWidth < 600 ? '14px' : '16px'};
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.8);
             position: relative;
