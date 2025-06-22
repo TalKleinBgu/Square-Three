@@ -1611,6 +1611,7 @@
         }
         /* Better portrait phone support */
         /* Better portrait phone support - REPLACE your existing mobile CSS with this */
+        /* Better portrait phone support - REPLACE your existing mobile CSS with this */
         @media (max-width: 480px) and (orientation: portrait) {
             body {
                 padding: 5px;
@@ -1647,27 +1648,35 @@
                 text-align: center;
             }
             
-            /* FIXED: Better board sizing to prevent right cutoff */
+            /* FIXED: Better board sizing and alignment */
             .board {
-                width: 88vw;           /* Slightly smaller width */
-                max-width: 260px;      /* Smaller max-width */
-                gap: 1.2vw;           /* Smaller gap */
-                padding: 2vw;
-                margin: 12px auto;
+                width: 82vw;              /* Much smaller width */
+                max-width: 240px;         /* Smaller max-width */
+                gap: 1vw;                 /* Smaller gap */
+                padding: 1.5vw;           /* Less padding */
+                margin: 12px auto;        /* Center the board */
                 border-radius: 12px;
-                box-sizing: border-box; /* Ensure padding is included */
+                box-sizing: border-box;   /* Ensure padding is included */
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);  /* Ensure 4 equal columns */
+                justify-items: center;    /* Center cells horizontally */
+                align-items: center;      /* Center cells vertically */
+                position: relative;       /* For positioning */
+                left: 0;                  /* Reset any positioning */
+                right: 0;                 /* Reset any positioning */
             }
             
             .cell {
-                width: 18vw;           /* Smaller cell size */
-                height: 18vw;
-                max-width: 50px;       /* Smaller max size */
-                max-height: 50px;
-                min-width: 38px;       /* Smaller minimum */
-                min-height: 38px;
-                font-size: 1rem;       /* Smaller font */
+                width: 16.5vw;            /* Smaller cell size */
+                height: 16.5vw;
+                max-width: 45px;          /* Smaller max size */
+                max-height: 45px;
+                min-width: 35px;          /* Smaller minimum */
+                min-height: 35px;
+                font-size: 0.9rem;        /* Smaller font */
                 border-radius: 8px;
                 border-width: 1px;
+                box-sizing: border-box;   /* Include borders in size */
             }
             
             /* Compact controls */
@@ -1714,23 +1723,36 @@
                 font-size: 12px;
             }
             
-            /* Compact rules */
+            /* FIXED: Bigger and better rules/instructions */
             .rules {
-                margin-top: 15px;
-                padding: 12px;
-                border-radius: 12px;
+                margin-top: 20px;
+                padding: 18px;            /* More padding */
+                border-radius: 15px;      /* Bigger border radius */
+                background: rgba(255, 255, 255, 0.9);  /* More visible background */
+                border: 2px solid rgba(74, 144, 226, 0.3);  /* Add border */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);   /* Add shadow */
             }
             
             .rules h3 {
-                font-size: 1rem;
-                margin-bottom: 8px;
+                font-size: 1.4rem;        /* Much bigger title */
+                margin-bottom: 15px;      /* More space below title */
+                color: #2c5aa0;           /* Blue color for title */
+                font-weight: 700;         /* Bold title */
+                text-align: center;       /* Center the title */
             }
             
             .rules li {
-                font-size: 11px;
-                line-height: 1.4;
-                margin-bottom: 4px;
-                padding-left: 20px;
+                font-size: 14px;          /* Bigger text */
+                line-height: 1.6;         /* Better line spacing */
+                margin-bottom: 8px;       /* More space between items */
+                padding-left: 25px;       /* More left padding */
+                color: #333;              /* Darker text for readability */
+                font-weight: 500;         /* Slightly bold text */
+            }
+            
+            .rules ul {
+                padding-left: 0;          /* Remove default padding */
+                margin: 0;                /* Remove default margin */
             }
             
             /* Statistics in portrait - simplified */
