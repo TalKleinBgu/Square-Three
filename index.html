@@ -1613,6 +1613,7 @@
         /* Better portrait phone support - REPLACE your existing mobile CSS with this */
         /* Better portrait phone support - REPLACE your existing mobile CSS with this */
 /* Better portrait phone support - REPLACE your existing mobile CSS with this */
+/* Better portrait phone support - REPLACE your existing mobile CSS with this */
         @media (max-width: 480px) and (orientation: portrait) {
             body {
                 padding: 5px;
@@ -1649,35 +1650,32 @@
                 text-align: center;
             }
             
-            /* FIXED: Much smaller board to prevent cutoff */
+            /* IMPROVED: Bigger board for better gameplay */
             .board {
-                width: 75vw;              /* Even smaller width */
-                max-width: 200px;         /* Much smaller max-width */
-                gap: 0.8vw;               /* Very small gap */
-                padding: 1vw;             /* Minimal padding */
-                margin: 12px auto;        /* Center the board */
-                border-radius: 10px;
-                box-sizing: border-box;   /* Ensure padding is included */
+                width: 85vw;              /* Bigger width - use more screen */
+                max-width: 280px;         /* Bigger max-width */
+                gap: 1.2vw;               /* More gap between cells */
+                padding: 2vw;             /* More padding */
+                margin: 15px auto;        /* Center the board */
+                border-radius: 15px;
+                box-sizing: border-box;   
                 display: grid;
-                grid-template-columns: repeat(4, 1fr);  /* Ensure 4 equal columns */
-                justify-items: center;    /* Center cells horizontally */
-                align-items: center;      /* Center cells vertically */
-                position: relative;       /* For positioning */
-                left: 0;                  /* Reset any positioning */
-                right: 0;                 /* Reset any positioning */
+                grid-template-columns: repeat(4, 1fr);  
+                justify-items: center;    
+                align-items: center;      
             }
             
             .cell {
-                width: 15vw;              /* Much smaller cell size */
-                height: 15vw;
-                max-width: 38px;          /* Much smaller max size */
-                max-height: 38px;
-                min-width: 30px;          /* Smaller minimum */
-                min-height: 30px;
-                font-size: 0.8rem;        /* Even smaller font */
-                border-radius: 6px;
-                border-width: 1px;
-                box-sizing: border-box;   /* Include borders in size */
+                width: 18vw;              /* Bigger cells */
+                height: 18vw;
+                max-width: 60px;          /* Bigger max size */
+                max-height: 60px;
+                min-width: 45px;          /* Bigger minimum */
+                min-height: 45px;
+                font-size: 1.2rem;        /* Bigger font for X/O */
+                border-radius: 10px;
+                border-width: 2px;        /* Thicker borders */
+                box-sizing: border-box;   
             }
             
             /* Compact controls */
@@ -3528,7 +3526,7 @@
                         gameMode === 'aivsai'
                             ? ` (${aiXStrategy.charAt(0).toUpperCase() + aiXStrategy.slice(1)})`
                             : '';
-                    gameStatus.innerHTML = `<span class="winner">Player X${strategy} Wins!</span>`;
+                    gameStatus.innerHTML = `🎉 <span class="winner">Player X${strategy} Wins!</span> 🎉`;
                     gameEnded = true;
 
                 } else if (game.wins('O')) {
@@ -3536,11 +3534,11 @@
                         gameMode === 'aivsai'
                             ? ` (${aiOStrategy.charAt(0).toUpperCase() + aiOStrategy.slice(1)})`
                             : '';
-                    gameStatus.innerHTML = `<span class="winner">Player O${strategy} Wins!</span>`;
+                    gameStatus.innerHTML = `🎉 <span class="winner">Player O${strategy} Wins!</span> 🎉`;
                     gameEnded = true;
 
                 } else if (game.isFull() || game.legalMoves().length === 0) {
-                    gameStatus.innerHTML = `<span class="winner">It’s a Draw!</span>`;
+                    gameStatus.innerHTML = `🤝 <span class="winner">It's a Tie!</span> 🤝`;
                     gameEnded = true;
                 } else {
                     gameStatus.textContent = '';          // keep area blank while game is running
