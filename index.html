@@ -1580,157 +1580,36 @@
             }
         } */ 
          /* Portrait phones */
-        /* Portrait phones - stack everything vertically */
         @media (max-width: 480px) and (orientation: portrait) {
-            .game-container {
-                padding: 15px;
-                margin: 10px;
-                border-radius: 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-                margin-bottom: 20px;
-            }
-            
             .board {
-                width: 90vw;
-                max-width: 320px;
-                gap: 2vw;
-                padding: 3vw;
-                margin: 20px auto;
+                width: 85vw;                    /* Smaller width for portrait */
+                gap: 1.5vw;
+                padding: 2vw;
             }
             
             .cell {
-                width: 18vw;
-                height: 18vw;
-                max-width: 65px;
-                max-height: 65px;
-                font-size: 1.4rem;
-                border-radius: 12px;
+                width: min(16vw, 70px);         /* Smaller cells for portrait */
+                height: min(16vw, 70px);
+                font-size: clamp(1rem, 3.5vw, 1.8rem);
             }
             
-            /* Stack game mode buttons vertically */
-            .game-mode {
-                flex-direction: column;
-                gap: 8px;
-                padding: 10px;
-            }
-            
-            .mode-btn {
-                padding: 12px 16px;
-                font-size: 13px;
-                width: 100%;
-            }
-            
-            /* Make AI settings more compact */
-            .ai-vs-ai-settings {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            
-            .game-info {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-                padding: 15px;
-            }
-            
-            .reset-btn, .stats-btn {
-                padding: 12px 20px;
-                font-size: 14px;
-                margin: 5px;
-            }
-            
-            /* Hide complex stats tables on portrait phones */
-            #matchupMatrix, #detailedResults {
-                display: none;
-            }
-            
-            /* Show simplified message instead */
-            #matchupMatrix::after {
-                content: "📱 Rotate phone to landscape to view detailed statistics";
-                display: block;
-                text-align: center;
-                padding: 20px;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 10px;
-                font-style: italic;
-                color: rgba(0, 0, 0, 0.7);
-            }
-            
-            /* Keep only rankings visible */
-            #strategyRankings {
-                display: block;
-            }
-            
-            .ranking-item.enhanced {
-                flex-direction: column;
-                text-align: center;
-                padding: 15px;
-                gap: 10px;
-            }
-            
-            .ranking-left {
-                justify-content: center;
-            }
-            
-            .win-rate-bar {
-                width: 100%;
-                max-width: 200px;
+            .game-container {
+                padding: 20px;                  /* Less padding on sides */
             }
         }
 
-        /* Landscape phones - use current good layout */
+        /* Landscape phones */
         @media (max-height: 500px) and (orientation: landscape) {
-            .game-container {
-                padding: 15px;
-                margin: 5px;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-                margin-bottom: 15px;
-            }
-            
             .board {
-                width: min(70vh, 350px);
+                width: min(60vh, 400px);        /* Use height as reference in landscape */
                 gap: 1vh;
                 padding: 2vh;
-                margin: 15px auto;
             }
             
             .cell {
-                width: min(14vh, 70px);
-                height: min(14vh, 70px);
-                font-size: 1.6rem;
-            }
-        }
-        @media (max-width: 480px) and (orientation: portrait) {
-            .matrix-table-enhanced {
-                overflow-x: auto;
-                font-size: 10px;
-                padding: 10px;
-            }
-            
-            .detail-header-enhanced,
-            .detail-item-enhanced {
-                grid-template-columns: 2fr 1fr 1fr 1fr;
-                font-size: 11px;
-                padding: 8px;
-            }
-            
-            .matrix-main-title h3 {
-                font-size: 16px;
-            }
-            
-            .strategy-header-name {
-                font-size: 9px;
-            }
-            
-            .matrix-cell-enhanced-clean {
-                padding: 6px 4px;
-                font-size: 10px;
+                width: min(12vh, 60px);         /* Smaller cells for landscape */
+                height: min(12vh, 60px);
+                font-size: clamp(0.9rem, 2.5vh, 1.5rem);
             }
         }
 
@@ -1785,6 +1664,34 @@
         @keyframes float {
             0% { transform: translate(0, 0); }
             100% { transform: translate(-100px, -100px); }
+        }
+        /* Show rotation suggestion on portrait phones */
+        @media (max-width: 480px) and (orientation: portrait) {
+            .rotation-suggestion {
+                display: block;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.9);
+                color: white;
+                padding: 20px;
+                border-radius: 15px;
+                text-align: center;
+                z-index: 10000;
+                font-size: 16px;
+            }
+            
+            .game-container {
+                filter: blur(5px);
+                pointer-events: none;
+            }
+        }
+
+        @media (min-width: 481px), (orientation: landscape) {
+            .rotation-suggestion {
+                display: none;
+            }
         }
 
         /* ==========================================
@@ -2504,7 +2411,12 @@
     </style>
 </head>
 <body>
-    
+    <div class="rotation-suggestion">
+        <div>📱➡️📱</div>
+        <h3>Better Experience</h3>
+        <p>Please rotate your phone to landscape mode for the best gaming experience!</p>
+        <div style="font-size: 24px; margin-top: 10px;">🔄</div>
+    </div>
     <div class="game-container">
         <h1>Square-Three</h1>
         
