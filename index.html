@@ -45,6 +45,22 @@
             justify-content: center;
             align-items: center;
         }
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top: 2px solid #4ECDC4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
         /* Remove this entire rule */
         .cell.X::before, .cell.O::before {
@@ -86,7 +102,7 @@
         }
         /* Add to your existing CSS */
         .cell:hover {
-            transform: scale(1.05);
+            transform: scale(1.1);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
@@ -252,18 +268,19 @@
         }
 
         .rules {
-            margin-top: 36px;
-            background: rgba(255, 255, 255, 0.4);
-            padding: 28px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+            border: 2px solid rgba(255, 255, 255, 0.8);
             border-radius: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            box-shadow: 
-                0 8px 32px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
-
+        .rules:hover {
+            box-shadow: 0 12px 40px rgba(74, 144, 226, 0.15);
+            border-color: rgba(74, 144, 226, 0.3);
+        }
         .rules::before {
             content: '';
             position: absolute;
@@ -1623,7 +1640,80 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-    
+        .mode-btn.primary-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 144, 226, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        .mode-btn.primary-button:hover {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(90, 103, 216, 0.8));
+            border-color: rgba(74, 144, 226, 0.9);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+        }
+
+        .mode-btn.primary-button:hover::before {
+            left: 100%;
+        }
+
+        .mode-btn.primary-button:active {
+            transform: translateY(0px);
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.2);
+    }
+    /* עיצוב מיוחד למובייל */
+        @media (max-width: 768px) {
+            .mode-btn.primary-button {
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+                border: 2px solid rgba(255, 255, 255, 0.8);
+                color: rgba(0, 0, 0, 0.8);
+                font-weight: 600;
+                padding: 12px 20px;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+                position: relative;
+                overflow: hidden;
+                min-width: 160px;
+                font-size: 14px;
+            }
+            .mode-btn.primary-button::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(74, 144, 226, 0.4), transparent);
+                transition: left 0.5s ease;
+            }
+            .mode-btn.primary-button:hover {
+                background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(90, 103, 216, 0.8));
+                border-color: rgba(74, 144, 226, 0.9);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+            }
+
+            .mode-btn.primary-button:hover::before {
+                left: 100%;
+            }
+
+            .mode-btn.primary-button:active {
+                transform: translateY(0px);
+                box-shadow: 0 4px 15px rgba(74, 144, 226, 0.2);
+}
+            div[style*="flex"] {
+                flex-direction: column !important;
+                align-items: center;
+            }
+        }
 /* Better portrait phone support - REPLACE your existing mobile CSS with this */
         /* Better portrait phone support - REPLACE your existing mobile CSS with this */
         @media (max-width: 480px) and (orientation: portrait) {
@@ -1765,12 +1855,14 @@
             
             /* FIXED: Bigger and better rules/instructions */
             .rules {
-                margin-top: 20px;
-                padding: 18px;            /* More padding */
-                border-radius: 15px;      /* Bigger border radius */
-                background: rgba(255, 255, 255, 0.9);  /* More visible background */
-                border: 2px solid rgba(74, 144, 226, 0.3);  /* Add border */
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);   /* Add shadow */
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+                border: 2px solid rgba(255, 255, 255, 0.8);
+                border-radius: 20px;
+                padding: 20px;
+                margin: 20px 0;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
             }
             
             .rules h3 {
@@ -2468,7 +2560,118 @@
             font-size: 16px;
             color: rgba(0, 0, 0, 0.9);
         }
+        .winning-line {
+            position: relative;
+            z-index: 10;
+            animation: neonPulse 2s ease-in-out infinite alternate;
+            box-shadow: 
+                0 0 5px currentColor,
+                0 0 10px currentColor,
+                0 0 20px currentColor,
+                0 0 40px currentColor;
+        }
 
+        .winning-line.X {
+            color: #FF6B6B;
+            text-shadow: 
+                0 0 5px #FF6B6B,
+                0 0 10px #FF6B6B,
+                0 0 20px #FF6B6B,
+                0 0 40px #FF6B6B;
+        }
+
+        .winning-line.O {
+            color: #4ECDC4;
+            text-shadow: 
+                0 0 5px #4ECDC4,
+                0 0 10px #4ECDC4,
+                0 0 20px #4ECDC4,
+                0 0 40px #4ECDC4;
+        }
+
+        @keyframes neonPulse {
+            0% { 
+                box-shadow: 
+                    0 0 5px currentColor,
+                    0 0 10px currentColor,
+                    0 0 20px currentColor;
+            }
+            100% { 
+                box-shadow: 
+                    0 0 10px currentColor,
+                    0 0 20px currentColor,
+                    0 0 30px currentColor,
+                    0 0 50px currentColor;
+            }
+        }
+        .victory-celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #FFD700;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        .confetti:nth-child(2n) { background: #FF6B6B; }
+        .confetti:nth-child(3n) { background: #4ECDC4; }
+        .confetti:nth-child(4n) { background: #45B7D1; }
+        .confetti:nth-child(5n) { background: #96CEB4; }
+
+        @keyframes confettiFall {
+            0% {
+                opacity: 1;
+                transform: translateY(-100px) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        .winner-text-explosion {
+            animation: textExplosion 2s ease-out;
+        }
+
+        @keyframes textExplosion {
+            0% { 
+                transform: scale(0.5) rotate(-10deg);
+                opacity: 0;
+            }
+            50% { 
+                transform: scale(1.3) rotate(5deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .board-victory-glow {
+            animation: boardGlow 1.5s ease-in-out;
+        }
+
+        @keyframes boardGlow {
+            0%, 100% { 
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            }
+            50% { 
+                box-shadow: 
+                    0 0 60px rgba(255, 215, 0, 0.6),
+                    0 0 100px rgba(255, 215, 0, 0.4),
+                    0 12px 40px rgba(0, 0, 0, 0.2);
+            }
+        }
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -2660,7 +2863,148 @@
             position: relative;
             overflow: hidden;
         }
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .tutorial-overlay.side-mode {
+            background: rgba(0, 0, 0, 0.3);
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .tutorial-box {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.5s ease;
+        }
+
+        .tutorial-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4A90E2;
+            margin-bottom: 15px;
+        }
+
+        .tutorial-text {
+            font-size: 1.1rem;
+            color: rgba(0, 0, 0, 0.8);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .tutorial-btn {
+            padding: 12px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        .tutorial-btn.next {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(90, 103, 216, 0.8));
+            color: white;
+        }
+        .tutorial-btn.next {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(90, 103, 216, 0.8));
+            color: white;
+        }
+
+        .tutorial-btn.skip {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .tutorial-btn:hover {
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.9), rgba(90, 103, 216, 0.8));
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.3);
+        }
+        .tutorial-btn:hover::before {
+            left: 100%;
+        }
+
+        .tutorial-btn.skip:hover {
+            border-color: rgba(74, 144, 226, 0.9);
+}
+        .tutorial-progress {
+            margin-top: 15px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .tutorial-box.side-position {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 280px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(74, 144, 226, 0.6);
+            box-shadow: 0 15px 50px rgba(74, 144, 226, 0.2);
+        }
+
+        /* חץ מצביע */
+        .tutorial-arrow {
+            position: fixed;
+            font-size: 3rem;
+            color: #FFD700;
+            z-index: 10001;
+            animation: pointBounce 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+            display: none;
+        }
+
+        @keyframes pointBounce {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(10deg); }
+        }
+
+        /* מיקום מיוחד למובייל */
+        @media (max-width: 768px) {
+            .tutorial-box.side-position {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                top: auto;
+                max-width: none;
+            }
+            
+            .tutorial-arrow {
+                font-size: 2rem;
+            }
+        }
+        .tutorial-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4A90E2, #5A67D8);
+            transition: width 0.3s ease;
+        }
         .primary-button:hover {
             background: rgba(255, 255, 255, 0.4);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
@@ -2786,6 +3130,23 @@
         to { transform: rotate(360deg); }
     }
     </style>
+    <!-- הוסף את זה בתחילת ה-body, לפני ה-game-container -->
+    <div class="tutorial-overlay" id="tutorialOverlay" style="display: none;">
+        <div class="tutorial-box" id="tutorialBox">
+            <div class="tutorial-title" id="tutorialTitle">Welcome to - Square-Three!</div>
+            <div class="tutorial-text" id="tutorialText">Let's learn how to play this great game!</div>
+            <div class="tutorial-buttons">
+                <button class="tutorial-btn next" id="tutorialNext">Next 👉</button>
+                <button class="tutorial-btn skip" id="tutorialSkip">Skip 🚫</button>
+            </div>
+            <div class="tutorial-progress">
+                <div class="tutorial-progress-bar" id="tutorialProgress" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- חץ מצביע -->
+    <div class="tutorial-arrow" id="tutorialArrow">👆</div>
     <div class="game-container">
         <h1>Square-Three</h1>
         
@@ -2977,7 +3338,10 @@
             <div class="game-status" id="gameStatus"></div>
         <div style="text-align: center; margin-top: 20px;">
             <button class="mode-btn primary-button" onclick="toggleRules()">📖 Game Rules</button>
+            <button class="mode-btn primary-button" onclick="startTutorial()">📖 Instruction</button>
+
         </div>
+        
         <div class="rules" style="display: none;">
                 <h3>How to Play:</h3>
                 <ul>
@@ -3084,7 +3448,275 @@
                 this.lastMove = prevLast;
             }
         }
+        // נתוני המדריך
+        // נתוני המדריך המעודכנים
+        const tutorialSteps = [
+            {
+                title: "Welcome to Square-Three! 🎮",
+                text: "This is an amazing strategy game! There are 2 ways to win. Let's learn how to play!",
+                action: null,
+                sideMode: false
+            },
+            {
+                title: "Way 1: Line of 4 in a Row 📏",
+                text: "Look at the board! Try to create a line of 4 X's or O's - horizontal, vertical, or diagonal like in the golden example.",
+                action: () => {
+                    highlightCells([0, 1, 2, 3]);
+                    showArrowAtCell(1.5, "👈");
+                },
+                sideMode: true
+            },
+            {
+                title: "Way 2: 2×2 Square 🟦",
+                text: "Or capture all 4 corners of any 2×2 square. Look at the golden square!",
+                action: () => {
+                    highlightCells([5, 6, 9, 10]);
+                    showArrowAtCell(7.5, "👈");
+                },
+                sideMode: true
+            },
+            {
+                title: "Hot Blocking Example 🚫",
+                text: document.getElementById('hotBlocking')?.checked ? 
+                    "See the red blocked cells? If the last move was here (blue), you can't play in the adjacent cells marked with 🚫!" :
+                    "Hot Blocking is currently OFF. When enabled, you can't play adjacent to the opponent's last move. Try toggling it on!",
+                action: () => {
+                    clearHighlights();
+                    const isHotBlockingOn = document.getElementById('hotBlocking')?.checked;
+                    
+                    if (isHotBlockingOn) {
+                        // Show the blocking visualization
+                        const cells = document.querySelectorAll('.cell');
+                        if (cells[5]) {
+                            // Highlight the "last move" in blue
+                            cells[5].style.border = '4px solid #007AFF';
+                            cells[5].style.background = 'rgba(0, 122, 255, 0.3)';
+                            cells[5].textContent = 'X';
+                            cells[5].style.color = '#007AFF';
+                            cells[5].style.fontSize = '2rem';
+                            cells[5].style.fontWeight = 'bold';
+                        }
+                        
+                        // Show blocked adjacent cells in red
+                        const adjacentCells = [1, 4, 6, 9]; // Adjacent to cell 5
+                        adjacentCells.forEach(index => {
+                            if (cells[index]) {
+                                cells[index].style.border = '4px solid #FF3B30';
+                                cells[index].style.background = 'rgba(255, 59, 48, 0.2)';
+                                cells[index].innerHTML = '🚫';
+                                cells[index].style.fontSize = '1.5rem';
+                            }
+                        });
+                        
+                        showArrowAtCell(5, "👆");
+                    } else {
+                        // Point to the hot blocking toggle
+                        const hotBlockingContainer = document.getElementById('hotBlockingContainer');
+                        if (hotBlockingContainer) {
+                            hotBlockingContainer.style.border = '3px solid #FFD700';
+                            hotBlockingContainer.style.borderRadius = '10px';
+                            hotBlockingContainer.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.6)';
+                        }
+                    }
+                },
+                sideMode: true
+            },
+            {
+                title: "Hot Blocking Toggle 🔄",
+                text: "You can enable or disable Hot Blocking in the settings. When enabled, you can't play adjacent to the last move.",
+                action: () => {
+                    clearHighlights();
+                    hideArrow();
+                },
+                sideMode: false
+            },
+            {
+                title: "Game Modes 🎮",
+                text: "You can play against another human, against an AI, or let two AIs battle each other.",
+                action: () => {
+                    clearHighlights();
+                    hideArrow();
+                },
+                sideMode: false
+            },
+            {
+                title: "AI Strategies 🤖",
+                text: "The AI uses different strategies to play. You can choose the difficulty and strategy in the settings.",
+                action: () => {
+                    clearHighlights();
+                    hideArrow();
+                },
+                sideMode: false
+            },
+            {
+                title: "Multi-Game Statistics 📊",
+                text: "You can run multi-game statistics to see how different AI strategies perform against each other.",
+                action: () => {
+                    clearHighlights();
+                    hideArrow();
+                },
+                sideMode: false
+            },
+            {
+                title: "Ready to Play! 🚀",
+                text: "Now click on any cell and start playing. Good luck!",
+                action: () => {
+                    clearHighlights();
+                    hideArrow();
+                },
+                sideMode: false
+            }
+        ];
 
+        // הצגת שלב במדריך - עודכן
+        function showTutorialStep(stepIndex) {
+            const step = tutorialSteps[stepIndex];
+            const overlay = document.getElementById('tutorialOverlay');
+            const box = document.getElementById('tutorialBox');
+            
+            document.getElementById('tutorialTitle').textContent = step.title;
+            document.getElementById('tutorialText').textContent = step.text;
+            
+            // מעבר בין מצב מרכזי לצידי
+            if (step.sideMode) {
+                overlay.classList.add('side-mode');
+                box.classList.add('side-position');
+            } else {
+                overlay.classList.remove('side-mode');
+                box.classList.remove('side-position');
+            }
+            
+            // עדכון פס הקדמה
+            const progress = ((stepIndex + 1) / tutorialSteps.length) * 100;
+            document.getElementById('tutorialProgress').style.width = progress + '%';
+            
+            // הפעלת פעולה (אם יש)
+            if (step.action) {
+                setTimeout(() => step.action(), 300); // דיליי קטן לאנימציה
+            }
+            // עדכון כפתורים
+            const nextBtn = document.getElementById('tutorialNext');
+            if (stepIndex === tutorialSteps.length - 1) {
+            nextBtn.textContent = "Let's start! 🎮";
+            } else {
+                nextBtn.textContent = 'Next 👉';
+            }
+        }
+
+        // פונקציות עזר להדגשת תאים ומיקום חץ
+        function highlightCells(indices) {
+            clearHighlights();
+            const cells = document.querySelectorAll('.cell');
+            indices.forEach(index => {
+                if (cells[index]) {
+                    cells[index].style.border = '4px solid #FFD700';
+                    cells[index].style.boxShadow = '0 0 25px rgba(255, 215, 0, 0.8)';
+                    cells[index].style.background = 'rgba(255, 215, 0, 0.2)';
+                    cells[index].style.zIndex = '5000';
+                }
+            });
+        }
+        // Add this function to your JavaScript code
+        function startTutorial() {
+            const overlay = document.getElementById('tutorialOverlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+                currentTutorialStep = 0;
+                showTutorialStep(0);
+            }
+        }
+
+        // Also add this variable at the top of your JavaScript section
+        let currentTutorialStep = 0;
+
+        // And add this function for the next button
+        function nextTutorialStep() {
+            currentTutorialStep++;
+            if (currentTutorialStep >= tutorialSteps.length) {
+                closeTutorial();
+            } else {
+                showTutorialStep(currentTutorialStep);
+            }
+        }
+        function showArrowAtCell(cellIndex, arrowSymbol = "👆") {
+            const cells = document.querySelectorAll('.cell');
+            const arrow = document.getElementById('tutorialArrow');
+            
+            if (cells[cellIndex] && arrow) {
+                const rect = cells[cellIndex].getBoundingClientRect();
+                arrow.style.display = 'block';
+                arrow.style.left = (rect.left + rect.width/2 - 25) + 'px';
+                arrow.style.top = (rect.top - 60) + 'px';
+                arrow.textContent = arrowSymbol;
+            }
+        }
+
+        function hideArrow() {
+            const arrow = document.getElementById('tutorialArrow');
+            if (arrow) {
+                arrow.style.display = 'none';
+            }
+        }
+        function clearHighlights() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.style.border = '';
+                cell.style.boxShadow = '';
+                cell.style.background = '';
+                cell.style.zIndex = '';
+                cell.style.color = '';
+                cell.style.fontSize = '';
+                cell.style.fontWeight = '';
+                cell.textContent = '';
+                cell.innerHTML = '';
+            });
+            
+            // Clear hot blocking container highlighting
+            const hotBlockingContainer = document.getElementById('hotBlockingContainer');
+            if (hotBlockingContainer) {
+                hotBlockingContainer.style.border = '';
+                hotBlockingContainer.style.borderRadius = '';
+                hotBlockingContainer.style.boxShadow = '';
+            }
+        }
+
+        // סגירת המדריך - עודכן
+        function closeTutorial() {
+            const overlay = document.getElementById('tutorialOverlay');
+            const box = document.getElementById('tutorialBox');
+            
+            overlay.style.display = 'none';
+            overlay.classList.remove('side-mode');
+            box.classList.remove('side-position');
+            
+            clearHighlights();
+            hideArrow();
+            
+            // שמירה שהמדריך הוצג
+            localStorage.setItem('tutorialCompleted', 'true');
+        }
+
+        // Event listeners למדריך
+        document.addEventListener('DOMContentLoaded', function() {
+            const tutorialNext = document.getElementById('tutorialNext');
+            const tutorialSkip = document.getElementById('tutorialSkip');
+            
+            if (tutorialNext) {
+                tutorialNext.addEventListener('click', nextTutorialStep);
+            }
+            
+            if (tutorialSkip) {
+                tutorialSkip.addEventListener('click', closeTutorial);
+            }
+            
+            // בדיקה אם להציג את המדריך
+            const tutorialCompleted = localStorage.getItem('tutorialCompleted');
+            if (!tutorialCompleted) {
+                setTimeout(() => {
+                    startTutorial();
+                }, 1000); // דיליי של שנייה אחרי טעינת הדף
+            }
+        });
         // Evaluation Functions
         function evalMaterial(game, me, opp) {
             return game.board.filter(cell => cell === me).length - 
@@ -3208,7 +3840,48 @@
 
             return score;
         }
+        function highlightWinningCells(player) {
+            const winningCells = getWinningCells(player);
+            if (winningCells.length > 0) {
+                winningCells.forEach(index => {
+                    const cell = document.querySelectorAll('.cell')[index];
+                    if (cell) {
+                        cell.classList.remove('last-move'); // הסר את last-move
+                        cell.classList.add('winning-line', player);
+                    }
+                });
+            }
+        }
 
+        function getWinningCells(player) {
+            // Check rows
+            for (let r = 0; r < 4; r++) {
+                const row = [r*4, r*4+1, r*4+2, r*4+3];
+                if (row.every(i => game.board[i] === player)) return row;
+            }
+            
+            // Check columns
+            for (let c = 0; c < 4; c++) {
+                const col = [c, c+4, c+8, c+12];
+                if (col.every(i => game.board[i] === player)) return col;
+            }
+            
+            // Check diagonals
+            const diag1 = [0, 5, 10, 15];
+            const diag2 = [3, 6, 9, 12];
+            if (diag1.every(i => game.board[i] === player)) return diag1;
+            if (diag2.every(i => game.board[i] === player)) return diag2;
+            
+            // Check squares
+            for (let r = 0; r < 3; r++) {
+                for (let c = 0; c < 3; c++) {
+                    const square = [r*4+c, r*4+c+1, (r+1)*4+c, (r+1)*4+c+1];
+                    if (square.every(i => game.board[i] === player)) return square;
+                }
+            }
+            
+            return [];
+        }
         function evalDefensive(game, me, opp) {
             let score = 0;
 
@@ -3328,7 +4001,55 @@
                 default: return evalPattern;
             }
         }
+        function createConfettiExplosion() {
+            const celebrationDiv = document.createElement('div');
+            celebrationDiv.className = 'victory-celebration';
+            document.body.appendChild(celebrationDiv);
+            
+            // יצירת 100 חלקיקי קונפטי
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                celebrationDiv.appendChild(confetti);
+            }
+            
+            // הסרה לאחר 5 שניות
+            setTimeout(() => {
+                celebrationDiv.remove();
+            }, 5000);
+        }
 
+        function addBoardGlow() {
+            const board = document.getElementById('board');
+            if (board) {
+                board.classList.add('board-victory-glow');
+                setTimeout(() => {
+                    board.classList.remove('board-victory-glow');
+                }, 1500);
+            }
+        }
+
+        function enhancedVictoryAnimation(player) {
+            // אפקט קונפטי
+            createConfettiExplosion();
+            
+            // זוהר ללוח
+            addBoardGlow();
+            
+            // אנימציה לטקסט הזכייה
+            const gameStatus = document.getElementById('gameStatus');
+            if (gameStatus) {
+                gameStatus.classList.add('winner-text-explosion');
+            }
+            
+            // רטט קל (אם נתמך)
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+        }
         function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRandomness = true, gameNumber = 0) {
             if (game.wins(me)) return [10000 - depth, null];
             if (game.wins(opp)) return [-10000 + depth, null];
@@ -3678,6 +4399,15 @@
                         cell.style.opacity = '1';
                         cell.style.pointerEvents = 'auto';
                     }
+                    if (game.wins('X')) {
+                        highlightWinningCells('X');
+                        enhancedVictoryAnimation('X');
+                        // ... קוד קיים ...
+                    } else if (game.wins('O')) {
+                        highlightWinningCells('O');
+                        enhancedVictoryAnimation('O');
+                        // ... קוד קיים ...
+                    }
                     board.appendChild(cell);
                 }
             }
@@ -3686,7 +4416,7 @@
             if (currentPlayerDiv && !gameEnded) {
                 if (gameMode === 'aivsai') {
                     const currentStrategy = currentPlayer === 'X' ? aiXStrategy : aiOStrategy;
-                    const statusText = aiVsAiRunning ? (aiVsAiPaused ? '(Paused)' : '(Thinking...)') : '(Ready)';
+                    const statusText = aiVsAiRunning ? (aiVsAiPaused ? '(Paused)' : '<span class="spinner"></span>') : '(Ready)';
                     currentPlayerDiv.innerHTML = `<span style="color: rgba(0, 0, 0, 0.8); font-weight: 500;">AI Battle:</span> <span style="color: ${currentPlayer === 'X' ? '#ff6b6b' : '#4ecdc4'}; font-weight: 600;">AI ${currentPlayer}</span> <span style="color: rgba(0, 0, 0, 0.7);">(${currentStrategy.charAt(0).toUpperCase() + currentStrategy.slice(1)}) <span style="color: rgba(0, 0, 0, 0.6); font-style: italic;">${statusText}</span></span>`;
                 } else {
                     currentPlayerDiv.textContent = `Current Player: ${currentPlayer}`;
