@@ -1904,7 +1904,58 @@
                 display: none;
             }
         }
+        /* Rotation suggestion for portrait phones */
+        .rotation-suggestion {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 10000;
+            font-size: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
 
+        .rotation-suggestion h3 {
+            margin: 10px 0;
+            color: #4ECDC4;
+        }
+
+        .rotation-suggestion p {
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+
+        /* Show on portrait phones only */
+        @media (max-width: 480px) and (orientation: portrait) {
+            .rotation-suggestion {
+                display: block;
+            }
+            
+            .game-container {
+                filter: blur(3px);
+                opacity: 0.3;
+                pointer-events: none;
+            }
+        }
+
+        /* Hide on landscape */
+        @media (orientation: landscape) {
+            .rotation-suggestion {
+                display: none !important;
+            }
+            
+            .game-container {
+                filter: none !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+            }
+        }
         /* ==========================================
            MAIN GAME CONTAINER
            ========================================== */
@@ -2623,11 +2674,24 @@
 </head>
 <body>
     <div class="rotation-suggestion">
-        <div>📱➡️📱</div>
-        <h3>Better Experience</h3>
-        <p>Please rotate your phone to landscape mode for the best gaming experience!</p>
-        <div style="font-size: 24px; margin-top: 10px;">🔄</div>
+        <div style="font-size: 48px; margin-bottom: 15px;">📱➡️📱</div>
+        <h3>Better Gaming Experience</h3>
+        <p>This game works best in <strong>landscape mode</strong>!</p>
+        <p>Please rotate your phone horizontally for:</p>
+        <ul style="text-align: left; margin: 15px 0;">
+            <li>✅ Larger game board</li>
+            <li>✅ Better button layout</li>
+            <li>✅ Full statistics view</li>
+        </ul>
+        <div style="font-size: 32px; margin-top: 15px; animation: spin 2s linear infinite;">🔄</div>
     </div>
+
+    <style>
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    </style>
     <div class="game-container">
         <h1>Square-Three</h1>
         
