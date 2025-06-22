@@ -4329,32 +4329,32 @@
             }
             
             // Parallax effect for background
-            function addParallaxEffect() {
-                let mouseX = 0;
-                let mouseY = 0;
+            // function addParallaxEffect() {
+            //     let mouseX = 0;
+            //     let mouseY = 0;
                 
-                document.addEventListener('mousemove', (e) => {
-                    mouseX = (e.clientX / window.innerWidth) * 100;
-                    mouseY = (e.clientY / window.innerHeight) * 100;
+            //     document.addEventListener('mousemove', (e) => {
+            //         mouseX = (e.clientX / window.innerWidth) * 100;
+            //         mouseY = (e.clientY / window.innerHeight) * 100;
                     
-                    const container = document.querySelector('.game-container');
-                    if (container) {
-                        const moveX = (mouseX - 50) * 0.02;
-                        const moveY = (mouseY - 50) * 0.02;
+            //         const container = document.querySelector('.game-container');
+            //         if (container) {
+            //             const moveX = (mouseX - 50) * 0.02;
+            //             const moveY = (mouseY - 50) * 0.02;
                         
-                        container.style.transform = `translateY(0) scale(1) rotateX(${moveY}deg) rotateY(${moveX}deg)`;
-                        container.style.transformStyle = 'preserve-3d';
-                        container.style.perspective = '1000px';
-                    }
-                });
+            //             container.style.transform = `translateY(0) scale(1) rotateX(${moveY}deg) rotateY(${moveX}deg)`;
+            //             container.style.transformStyle = 'preserve-3d';
+            //             container.style.perspective = '1000px';
+            //         }
+            //     });
                 
-                document.addEventListener('mouseleave', () => {
-                    const container = document.querySelector('.game-container');
-                    if (container) {
-                        container.style.transform = 'translateY(0) scale(1) rotateX(0deg) rotateY(0deg)';
-                    }
-                });
-            }
+            //     document.addEventListener('mouseleave', () => {
+            //         const container = document.querySelector('.game-container');
+            //         if (container) {
+            //             container.style.transform = 'translateY(0) scale(1) rotateX(0deg) rotateY(0deg)';
+            //         }
+            //     });
+            // }
             
             // Add loading animation for AI moves
             function addAIThinkingAnimation() {
@@ -4381,7 +4381,7 @@
             // Initialize all enhancements
             addHoverEffects();
             addPageTransitions();
-            addParallaxEffect();
+            // addParallaxEffect();
             addAIThinkingAnimation();
             
             // Add smooth scroll for long content
