@@ -900,9 +900,76 @@ function initGame() {
     updateDisplay();
 }
 function toggleRules() {
-    const rules = document.querySelector('.rules');
-    const isHidden = rules.style.display === 'none';
-    rules.style.display = isHidden ? 'block' : 'none';
+    // יצירת popup
+    const popup = document.createElement('div');
+    popup.id = 'rulesPopup';
+    popup.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    `;
+    
+    popup.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 650px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+        ">
+            <button onclick="document.getElementById('rulesPopup').remove()" style="
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #666;
+            ">×</button>
+            
+            <h3 style="margin-bottom: 20px; color: #4A90E2; text-align: center;">🎮 How to Play Square-Three</h3>
+            
+            <div style="text-align: left; line-height: 1.8; color: #333;">
+                <p><strong>🎯 Win by Line:</strong> Get 4 in a row (horizontal, vertical, or diagonal)</p>
+                <p><strong>🟦 Win by Square:</strong> Get all 4 corners of any 2×2 square</p>
+                <p><strong>🚫 Hot Blocking:</strong> When enabled, you can't play adjacent to the last move</p>
+                <p><strong>🤖 AI Strategies:</strong> Each AI uses different evaluation functions for unique playstyles</p>
+                <p><strong>⚡ Strategy:</strong> Block your opponent while creating your own winning patterns!</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 25px;">
+                <button onclick="document.getElementById('rulesPopup').remove()" style="
+                    background: linear-gradient(135deg, #4A90E2, #5A67D8);
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">Got it! 👍</button>
+            </div>
+        </div>
+    `;
+    
+    // סגירה בלחיצה על הרקע
+    popup.onclick = function(e) {
+        if (e.target === popup) {
+            popup.remove();
+        }
+    };
+    
+    document.body.appendChild(popup);
 }
 function setGameMode(mode) {
     gameMode = mode;
@@ -1790,8 +1857,8 @@ document.addEventListener('DOMContentLoaded', function() {
         cells.forEach(cell => {
             cell.addEventListener('mouseenter', function() {
                 if (!this.classList.contains('blocked') && this.textContent === '') {
-                    this.style.transform = 'translateY(-4px) scale(1.02)';
-                    this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    this.style.transform = 'translateY(-2px) scale(1.02)';
+                    this.style.transition = 'all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)'; /* מהיר יותר */
                 }
             });
             
