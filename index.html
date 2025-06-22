@@ -1612,6 +1612,7 @@
         /* Better portrait phone support */
         /* Better portrait phone support - REPLACE your existing mobile CSS with this */
         /* Better portrait phone support - REPLACE your existing mobile CSS with this */
+/* Better portrait phone support - REPLACE your existing mobile CSS with this */
         @media (max-width: 480px) and (orientation: portrait) {
             body {
                 padding: 5px;
@@ -1648,14 +1649,14 @@
                 text-align: center;
             }
             
-            /* FIXED: Better board sizing and alignment */
+            /* FIXED: Much smaller board to prevent cutoff */
             .board {
-                width: 82vw;              /* Much smaller width */
-                max-width: 240px;         /* Smaller max-width */
-                gap: 1vw;                 /* Smaller gap */
-                padding: 1.5vw;           /* Less padding */
+                width: 75vw;              /* Even smaller width */
+                max-width: 200px;         /* Much smaller max-width */
+                gap: 0.8vw;               /* Very small gap */
+                padding: 1vw;             /* Minimal padding */
                 margin: 12px auto;        /* Center the board */
-                border-radius: 12px;
+                border-radius: 10px;
                 box-sizing: border-box;   /* Ensure padding is included */
                 display: grid;
                 grid-template-columns: repeat(4, 1fr);  /* Ensure 4 equal columns */
@@ -1667,14 +1668,14 @@
             }
             
             .cell {
-                width: 16.5vw;            /* Smaller cell size */
-                height: 16.5vw;
-                max-width: 45px;          /* Smaller max size */
-                max-height: 45px;
-                min-width: 35px;          /* Smaller minimum */
-                min-height: 35px;
-                font-size: 0.9rem;        /* Smaller font */
-                border-radius: 8px;
+                width: 15vw;              /* Much smaller cell size */
+                height: 15vw;
+                max-width: 38px;          /* Much smaller max size */
+                max-height: 38px;
+                min-width: 30px;          /* Smaller minimum */
+                min-height: 30px;
+                font-size: 0.8rem;        /* Even smaller font */
+                border-radius: 6px;
                 border-width: 1px;
                 box-sizing: border-box;   /* Include borders in size */
             }
