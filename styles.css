@@ -2385,7 +2385,7 @@ div[style*="text-align: center; margin-top: 20px"] {
     /* Bigger board for better gameplay */
     .board {
         width: 85vw;
-        max-width: 280px;
+        max-width: 330px;
         gap: 1.2vw;
         padding: 2vw;
         margin: 15px auto;
