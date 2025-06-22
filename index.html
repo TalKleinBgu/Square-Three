@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Square-Three Game</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <div class="rotation-suggestion">
+        <div style="font-size: 48px; margin-bottom: 15px;">📱➡️📱</div>
+        <h3>Better Gaming Experience</h3>
+        <p>This game works best in <strong>landscape mode</strong>!</p>
+        <p>Please rotate your phone horizontally for:</p>
+        <ul style="text-align: left; margin: 15px 0;">
+            <li>✅ Larger game board</li>
+            <li>✅ Better button layout</li>
+            <li>✅ Full statistics view</li>
+        </ul>
+        <div style="font-size: 32px; margin-top: 15px; animation: spin 2s linear infinite;">🔄</div>
+    </div>
+
+    <!-- הוסף את זה בתחילת ה-body, לפני ה-game-container -->
+    <div class="tutorial-overlay" id="tutorialOverlay" style="display: none;">
+        <div class="tutorial-box" id="tutorialBox">
+            <div class="tutorial-title" id="tutorialTitle">Welcome to - Square-Three!</div>
+            <div class="tutorial-text" id="tutorialText">Let's learn how to play this great game!</div>
+            <div class="tutorial-buttons">
+                <button class="tutorial-btn next" id="tutorialNext">Next 👉</button>
+                <button class="tutorial-btn skip" id="tutorialSkip">Skip 🚫</button>
+            </div>
+            <div class="tutorial-progress">
+                <div class="tutorial-progress-bar" id="tutorialProgress" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- חץ מצביע -->
+    <div class="tutorial-arrow" id="tutorialArrow">👆</div>
+    <div class="game-container">
+        <h1>Square-Three</h1>
+        
+        <div class="game-mode">
+            <button class="mode-btn active" onclick="setGameMode('human')">Human vs Human</button>
+            <button class="mode-btn" onclick="setGameMode('ai')">Human vs AI</button>
+            <button class="mode-btn" onclick="setGameMode('aivsai')">AI vs AI</button>
+            <button class="mode-btn" onclick="setGameMode('statistics')">Multi-Game Stats</button>
+        </div>
+
+        <div class="ai-settings" id="aiSettings">
+            <div id="humanVsAiSettings", class = "depth-control">
+                <label>AI Difficulty:</label>
+                <select class="difficulty-select" id="aiDifficulty">
+                    <option value="2">Very Easy (Depth 2)</option>
+                    <option value="3">Easy (Depth 3)</option>
+                    <option value="4" selected>Medium (Depth 4)</option>
+                    <option value="5">Hard (Depth 5)</option>
+                    <option value="6">Expert (Depth 6)</option>
+                </select>
+                <div style="margin-top: 15px;">
+                    <label>AI Strategy:</label>
+                    <select class="difficulty-select" id="aiStrategy">
+                        <option value="pattern">Pattern-Based (Balanced)</option>
+                        <option value="aggressive">Aggressive (Attack Focus)</option>
+                        <option value="defensive">Defensive (Block Focus)</option>
+                        <option value="positional">Positional (Board Control)</option>
+                        <option value="material">Material (Token Count)</option>
+                    </select>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px;">
+                        <label>Hot Adjacency Blocking:</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="aiHotBlocking" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="aiVsAiSettings" style="display: none;">
+                <div class="depth-control" >
+                    <label>Search Depth (Both AIs):</label>
+                    <select class="difficulty-select" id="sharedDepth">
+                        <option value="2">Depth 2 (Very Fast)</option>
+                        <option value="3">Depth 3 (Fast)</option>
+                        <option value="4" selected>Depth 4 (Medium)</option>
+                        <option value="5">Depth 5 (Slow)</option>
+                        <option value="6">Depth 6 (Very Slow)</option>
+                    </select>
+                   <div style="display: flex; align-items: center; justify-content: center; gap: 10px;margin-top: 15px;">
+                        <label>Hot Adjacency Blocking:</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="aiVsAiHotBlocking" checked>
+                            <span class="slider"></span>
+                        </label>
+                </div>
+                </div>
+                
+                <div class="ai-vs-ai-settings">
+                    <div class="ai-config ai-x">
+                        <h4 style="color: #ff6b6b;">AI X Strategy</h4>
+                        <select class="eval-select" id="aiXStrategy">
+                            <option value="pattern">Pattern-Based</option>
+                            <option value="aggressive" selected>Aggressive</option>
+                            <option value="defensive">Defensive</option>
+                            <option value="positional">Positional</option>
+                            <option value="material">Material</option>
+                        </select>
+                        <div class="eval-description" id="aiXDescription">
+                            Focuses on creating winning threats and attacking patterns.
+                        </div>
+                    </div>
+                    
+                    <div class="ai-config ai-o">
+                        <h4 style="color: #4ecdc4;">AI O Strategy</h4>
+                        <select class="eval-select" id="aiOStrategy">
+                            <option value="pattern">Pattern-Based</option>
+                            <option value="aggressive">Aggressive</option>
+                            <option value="defensive" selected>Defensive</option>
+                            <option value="positional">Positional</option>
+                            <option value="material">Material</option>
+                        </select>
+                        <div class="eval-description" id="aiODescription">
+                            Prioritizes blocking opponent threats and defensive play.
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; text-align: center;">
+                    <button class="mode-btn primary-button" onclick="startAiVsAi()">Start AI Battle</button>
+                    <button class="mode-btn primary-button" onclick="pauseAiVsAi()" id="pauseBtn" style="display: none;">Pause</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-settings" id="statisticsSettings" style="display: none;">
+            <div class="depth-control">
+                <div style="margin-bottom: 16px;">
+                    <label>Test Depth (Both AIs):</label>
+                    <select class="difficulty-select" id="testDepth">
+                        <option value="2">Depth 2 (Very Fast)</option>
+                        <option value="3">Depth 3 (Fast)</option>
+                        <option value="4" selected>Depth 4 (Medium)</option>
+                        <option value="5">Depth 5 (Slow)</option>
+                        <option value="6">Depth 6 (Very Slow)</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label>Number of Games per Combination:</label>
+                    <select class="difficulty-select" id="gamesPerCombo">
+                        <option value="5">5 Games (Quick)</option>
+                        <option value="10" selected>10 Games (Standard)</option>
+                        <option value="20">20 Games (Thorough)</option>
+                        <option value="50">50 Games (Comprehensive)</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <label>Hot Adjacency Blocking:</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="statsHotBlocking" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="mode-btn primary-button" onclick="startFullStatistics()" id="fullStatsBtn">
+                    Run Full Statistics Test
+                </button>
+                <button class="mode-btn primary-button" onclick="stopFullStatistics()" id="stopStatsBtn" style="display: none;">
+                    Stop Test
+                </button>
+            </div>
+
+            <div id="statisticsProgress" style="display: none; margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px;">
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <strong id="currentTestInfo">Testing: Aggressive (X - goes first) vs Defensive (O - goes second)</strong>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); border-radius: 10px; height: 20px; overflow: hidden;">
+                    <div id="progressBar" style="background: linear-gradient(45deg, #FFD700, #FFA500); height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                </div>
+                <div style="text-align: center; margin-top: 5px;">
+                    <span id="progressText">0% - 0/250 games completed</span>
+                </div>
+                <div style="text-align: center; margin-top: 10px; font-size: 12px; color: rgba(0, 0, 0, 0.7);">
+                    <strong>Note:</strong> Each strategy plays both as X (first player) and O (second player) against every other strategy.<br>
+                    Going first can provide an advantage, so both positions are tested for fair comparison.
+                </div>
+            </div>
+
+            <div id="fullStatisticsResults" style="display: none;">
+                <h3 style="text-align: center; color: #FFD700; margin-bottom: 15px;">Complete Strategy Analysis</h3>
+                
+                <div id="strategyRankings" style="margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px;">
+                    <h4 style="color: #FFD700; margin-bottom: 10px;">Strategy Rankings</h4>
+                    <div id="rankingsList"></div>
+                </div>
+
+                <div id="matchupMatrix" style="margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px;">
+                    <h4 style="color: #FFD700; margin-bottom: 10px;">Head-to-Head Matrix</h4>
+                    <div id="matrixTable"></div>
+                </div>
+
+                <div id="detailedResults" style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px;">
+                    <h4 style="color: #FFD700; margin-bottom: 10px;">Detailed Results</h4>
+                    <div id="detailsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-controls" id="gameControls">
+            <div class="hot-blocking-toggle" id="hotBlockingContainer" >
+                <span id="hotBlockingLabel" class="toggle-label">Hot Adjacency Blocking:</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="hotBlocking" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="game-info">
+                <div class="current-player" id="currentPlayer">Current Player: X</div>
+                <button class="reset-btn" onclick="resetGame()">New Game</button>
+            </div>
+
+            <div class="board" id="board"></div>
+
+            <div class="game-status" id="gameStatus"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="mode-btn primary-button" onclick="toggleRules()">📖 Game Rules</button>
+            <button class="mode-btn primary-button" onclick="startTutorial()">📖 Instruction</button>
+
+        </div>
+        
+        <div class="rules" style="display: none;">
+                <h3>How to Play:</h3>
+                <ul>
+                    <li><strong>Win by Line:</strong> Get 4 in a row (horizontal, vertical, or diagonal)</li>
+                    <li><strong>Win by Square:</strong> Get all 4 corners of any 2×2 square</li>
+                    <li><strong>Hot Blocking:</strong> When enabled, you can't play adjacent to the last move</li>
+                    <li><strong>AI Strategies:</strong> Each AI uses different evaluation functions for unique playstyles</li>
+                    <li><strong>Strategy:</strong> Block your opponent while creating your own winning patterns!</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+
+</body>
+</html>
