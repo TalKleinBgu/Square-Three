@@ -2537,7 +2537,7 @@ div[style*="text-align: center; margin-top: 20px"] {
     #detailedResults .detail-header-enhanced,
     #detailedResults .detail-item-enhanced,
     #detailedResults .strategy-section-header {
-        display: none;
+        display: block ;
     }
     
     /* Bigger, more readable rotation message */
