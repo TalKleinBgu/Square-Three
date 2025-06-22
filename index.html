@@ -9,15 +9,20 @@
            GAME BOARD COMPLETION
            ========================================== */
         .cell {
-            width: 85px;
-            height: 85px;
+            width: min(18vw, 90px);      /* 18% of screen width, max 90px */
+            height: min(18vw, 90px);     /* Square cells */
+            max-width: 90px;
+            max-height: 90px;
+            min-width: 50px;             /* Minimum size for very small screens */
+            min-height: 50px;
+            aspect-ratio: 1;             /* Keeps cells square */
             background: rgba(255, 255, 255, 0.4);
             border: 2px solid rgba(255, 255, 255, 0.6);
             border-radius: 16px;
             display: flex !important;
             justify-content: center !important;
             align-items: center !important;
-            font-size: 2rem;
+            font-size: clamp(1.2rem, 4vw, 2rem);  /* Responsive font size */
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1359,7 +1364,7 @@
         /* ==========================================
            RESPONSIVE DESIGN
            ========================================== */
-        @media (max-width: 768px) {
+        /* @media (max-width: 768px) {
             .game-container {
                 padding: 28px;
                 border-radius: 24px;
@@ -1573,7 +1578,7 @@
             .ai-vs-ai-settings {
                 grid-template-columns: 1fr;
             }
-        }
+        } */
 
         /* ==========================================
            RESET & BASE STYLES
@@ -2291,10 +2296,10 @@
         .board {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin: 3px auto;
-            width: 445px;
-            padding: 20px;
+            gap: 2vw;
+            margin: 4vh auto;
+            width: min(90vw, 500px);
+            padding: 3vw;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 24px;
             backdrop-filter: blur(15px);
