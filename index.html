@@ -1610,6 +1610,7 @@
             100% { background-position: 0% 50%; }
         }
         /* Better portrait phone support */
+        /* Better portrait phone support - REPLACE your existing mobile CSS with this */
         @media (max-width: 480px) and (orientation: portrait) {
             body {
                 padding: 5px;
@@ -1629,44 +1630,42 @@
                 line-height: 1.1;
             }
             
-            /* Horizontal scrolling for game modes */
+            /* FIXED: Stack game modes vertically (not horizontally) */
             .game-mode {
                 display: flex;
-                flex-direction: row;
-                overflow-x: auto;
-                gap: 8px;
-                padding: 8px 4px;
+                flex-direction: column;  /* Changed from row to column */
+                gap: 10px;              /* Bigger gap for better spacing */
+                padding: 12px 8px;
                 margin-bottom: 15px;
-                scroll-snap-type: x mandatory;
             }
             
             .mode-btn {
-                flex: 0 0 auto;
-                padding: 8px 12px;
-                font-size: 11px;
-                white-space: nowrap;
-                min-width: 120px;
-                scroll-snap-align: start;
+                width: 100%;            /* Full width buttons */
+                padding: 12px 16px;     /* More padding for easier tapping */
+                font-size: 13px;
+                border-radius: 12px;
+                text-align: center;
             }
             
-            /* Compact board */
+            /* FIXED: Better board sizing to prevent right cutoff */
             .board {
-                width: 90vw;
-                max-width: 280px;
-                gap: 1vw;
+                width: 88vw;           /* Slightly smaller width */
+                max-width: 260px;      /* Smaller max-width */
+                gap: 1.2vw;           /* Smaller gap */
                 padding: 2vw;
                 margin: 12px auto;
                 border-radius: 12px;
+                box-sizing: border-box; /* Ensure padding is included */
             }
             
             .cell {
-                width: 19vw;
-                height: 19vw;
-                max-width: 55px;
-                max-height: 55px;
-                min-width: 40px;
-                min-height: 40px;
-                font-size: 1.1rem;
+                width: 18vw;           /* Smaller cell size */
+                height: 18vw;
+                max-width: 50px;       /* Smaller max size */
+                max-height: 50px;
+                min-width: 38px;       /* Smaller minimum */
+                min-height: 38px;
+                font-size: 1rem;       /* Smaller font */
                 border-radius: 8px;
                 border-width: 1px;
             }
@@ -1757,18 +1756,23 @@
                 display: none;
             }
             
+            /* FIXED: Bigger, more readable rotation message */
             #matchupMatrix::after,
             #detailedResults::after {
-                content: "📱 Rotate to landscape view for detailed statistics";
+                content: "📱➡️ Rotate to landscape view for detailed statistics 📊";
                 display: block;
                 text-align: center;
-                padding: 15px;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 8px;
+                padding: 20px 15px;     /* More padding */
+                background: rgba(74, 144, 226, 0.15);  /* Better background color */
+                border: 2px dashed rgba(74, 144, 226, 0.4);  /* Border for visibility */
+                border-radius: 12px;    /* Bigger border radius */
                 font-style: italic;
-                color: rgba(0, 0, 0, 0.6);
-                font-size: 12px;
+                color: #2c5aa0;         /* Darker, more readable color */
+                font-size: 15px;        /* Bigger font size */
+                font-weight: 600;       /* Bold text */
+                line-height: 1.4;       /* Better line spacing */
                 margin-top: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
             }
             
             /* Keep rankings simple */
@@ -1800,6 +1804,7 @@
                 gap: 3px;
             }
         }
+
         /* Floating particles background effect */
         body::before {
             content: '';
