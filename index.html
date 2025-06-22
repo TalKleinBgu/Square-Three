@@ -1706,6 +1706,33 @@
                 font-size: 1.6rem;
             }
         }
+        @media (max-width: 480px) and (orientation: portrait) {
+            .matrix-table-enhanced {
+                overflow-x: auto;
+                font-size: 10px;
+                padding: 10px;
+            }
+            
+            .detail-header-enhanced,
+            .detail-item-enhanced {
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+                font-size: 11px;
+                padding: 8px;
+            }
+            
+            .matrix-main-title h3 {
+                font-size: 16px;
+            }
+            
+            .strategy-header-name {
+                font-size: 9px;
+            }
+            
+            .matrix-cell-enhanced-clean {
+                padding: 6px 4px;
+                font-size: 10px;
+            }
+        }
 
         /* ==========================================
            RESET & BASE STYLES
