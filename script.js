@@ -164,15 +164,6 @@ const tutorialSteps = [
         sideMode: true
     },
     {
-        title: "Hot Blocking Toggle 🔄",
-        text: "You can enable or disable Hot Blocking in the settings. When enabled, you can't play adjacent to the last move.",
-        action: () => {
-            clearHighlights();
-            hideArrow();
-        },
-        sideMode: false
-    },
-    {
         title: "Game Modes 🎮",
         text: "You can play against another human, against an AI, or let two AIs battle each other.",
         action: () => {
@@ -856,6 +847,7 @@ let fullStatsRunning = false;
 let fullStatsData = {
     strategies: ['pattern', 'aggressive', 'defensive', 'positional', 'material'],
     results: {}, // Will store results for each combination
+    winTypes: {}, // ADD THIS LINE - Will store win type statistics
     currentCombo: 0,
     totalCombos: 0,
     currentGameInCombo: 0,
@@ -1293,12 +1285,20 @@ function startFullStatistics() {
     // Initialize results structure
     strategies.forEach(strategy1 => {
         fullStatsData.results[strategy1] = {};
+        fullStatsData.winTypes[strategy1] = {}; // ADD THIS LINE
         strategies.forEach(strategy2 => {
             fullStatsData.results[strategy1][strategy2] = {
                 wins: 0,
                 losses: 0,
                 draws: 0,
                 games: 0
+            };
+            // ADD THIS BLOCK
+            fullStatsData.winTypes[strategy1][strategy2] = {
+                horizontal: 0,
+                vertical: 0,
+                diagonal: 0,
+                square: 0
             };
         });
     });
@@ -1402,12 +1402,16 @@ function recordStatGameResult() {
     const strategy2 = strategies[strategy2Index];
     
     const result = fullStatsData.results[strategy1][strategy2];
+    const winTypeResult = fullStatsData.winTypes[strategy1][strategy2]; // ADD THIS LINE
     result.games++;
     
     if (game.wins('X')) {
         result.wins++;
+        const winType = getWinType(game, 'X');
+        winTypeResult[winType]++;
     } else if (game.wins('O')) {
         result.losses++;
+        const winType = getWinType(game, 'O');
     } else {
         result.draws++;
     }
@@ -1421,6 +1425,45 @@ function recordStatGameResult() {
             runNextStatGame();
         }
     }, 50);
+}
+// Function to determine win type - ADD THIS FUNCTION
+function getWinType(game, player) {
+    // Check horizontal wins
+    for (let r = 0; r < 4; r++) {
+        if (Array.from({length: 4}, (_, c) => game.board[game.index(r, c)]).every(cell => cell === player)) {
+            return 'horizontal';
+        }
+    }
+    
+    // Check vertical wins
+    for (let c = 0; c < 4; c++) {
+        if (Array.from({length: 4}, (_, r) => game.board[game.index(r, c)]).every(cell => cell === player)) {
+            return 'vertical';
+        }
+    }
+    
+    // Check diagonal wins
+    if (Array.from({length: 4}, (_, i) => game.board[game.index(i, i)]).every(cell => cell === player)) {
+        return 'diagonal';
+    }
+    if (Array.from({length: 4}, (_, i) => game.board[game.index(i, 3 - i)]).every(cell => cell === player)) {
+        return 'diagonal';
+    }
+    
+    // Check square wins
+    for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+            const corners = [
+                game.index(r, c), game.index(r, c + 1),
+                game.index(r + 1, c), game.index(r + 1, c + 1)
+            ];
+            if (corners.every(i => game.board[i] === player)) {
+                return 'square';
+            }
+        }
+    }
+    
+    return 'unknown'; // Fallback
 }
 
 function updateStatProgress() {
@@ -1441,11 +1484,119 @@ function updateStatProgress() {
     if (progressText) progressText.textContent = `${percentage}% - ${safeCompletedGames}/${totalGames} games completed`;
 }
 
+// ADD THIS NEW FUNCTION for displaying win types
+function displayWinTypes() {
+    const strategies = fullStatsData.strategies;
+    
+    // Create win types section in HTML if it doesn't exist
+    let winTypesSection = document.getElementById('winTypesResults');
+    if (!winTypesSection) {
+        const fullResults = document.getElementById('fullStatisticsResults');
+        if (fullResults) {
+            const winTypesHTML = `
+                <div id="winTypesResults" style="margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px;">
+                    <h4 style="color: #FFD700; margin-bottom: 10px;">🎯 Win Type Distribution</h4>
+                    <div id="winTypesTable"></div>
+                </div>
+            `;
+            
+            // Insert after strategy rankings
+            const strategyRankings = document.getElementById('strategyRankings');
+            if (strategyRankings && strategyRankings.nextSibling) {
+                strategyRankings.insertAdjacentHTML('afterend', winTypesHTML);
+            } else if (fullResults.firstChild) {
+                fullResults.insertAdjacentHTML('afterbegin', winTypesHTML);
+            }
+        }
+    }
+
+    const winTypesTable = document.getElementById('winTypesTable');
+    if (!winTypesTable) return;
+
+    const strategyInfo = {
+        'pattern': { icon: '🎯', color: '#007AFF' },
+        'aggressive': { icon: '⚔️', color: '#FF3B30' },
+        'defensive': { icon: '🛡️', color: '#34C759' },
+        'positional': { icon: '♟️', color: '#AF52DE' },
+        'material': { icon: '🔢', color: '#FF9500' }
+    };
+
+    let html = '<div class="win-types-table">';
+    
+    // Header
+    html += '<div class="win-types-header">';
+    html += '<div class="win-type-header-cell">Strategy</div>';
+    html += '<div class="win-type-header-cell">🟰 Horizontal</div>';
+    html += '<div class="win-type-header-cell">⬇️ Vertical</div>';
+    html += '<div class="win-type-header-cell">↗️ Diagonal</div>';
+    html += '<div class="win-type-header-cell">🟦 Square</div>';
+    html += '<div class="win-type-header-cell">📊 Total Wins</div>';
+    html += '</div>';
+
+    // Calculate totals for each strategy
+    strategies.forEach(strategy1 => {
+        const info = strategyInfo[strategy1];
+        let totalHorizontal = 0, totalVertical = 0, totalDiagonal = 0, totalSquare = 0, totalWins = 0;
+        
+        strategies.forEach(strategy2 => {
+            const winTypes = fullStatsData.winTypes[strategy1][strategy2];
+            const results = fullStatsData.results[strategy1][strategy2];
+            
+            totalHorizontal += winTypes.horizontal;
+            totalVertical += winTypes.vertical;
+            totalDiagonal += winTypes.diagonal;
+            totalSquare += winTypes.square;
+            totalWins += results.wins;
+        });
+
+        html += '<div class="win-type-row">';
+        html += `<div class="win-type-cell strategy-cell" style="border-left-color: ${info.color};">
+            <span class="strategy-icon">${info.icon}</span>
+            <span class="strategy-name" style="color: ${info.color};">${strategy1.charAt(0).toUpperCase() + strategy1.slice(1)}</span>
+        </div>`;
+        
+        const horizontalPercent = totalWins > 0 ? ((totalHorizontal / totalWins) * 100).toFixed(1) : '0.0';
+        const verticalPercent = totalWins > 0 ? ((totalVertical / totalWins) * 100).toFixed(1) : '0.0';
+        const diagonalPercent = totalWins > 0 ? ((totalDiagonal / totalWins) * 100).toFixed(1) : '0.0';
+        const squarePercent = totalWins > 0 ? ((totalSquare / totalWins) * 100).toFixed(1) : '0.0';
+
+        html += `<div class="win-type-cell">
+            <div class="win-count">${totalHorizontal}</div>
+            <div class="win-percent">${horizontalPercent}%</div>
+        </div>`;
+        
+        html += `<div class="win-type-cell">
+            <div class="win-count">${totalVertical}</div>
+            <div class="win-percent">${verticalPercent}%</div>
+        </div>`;
+        
+        html += `<div class="win-type-cell">
+            <div class="win-count">${totalDiagonal}</div>
+            <div class="win-percent">${diagonalPercent}%</div>
+        </div>`;
+        
+        html += `<div class="win-type-cell">
+            <div class="win-count">${totalSquare}</div>
+            <div class="win-percent">${squarePercent}%</div>
+        </div>`;
+        
+        html += `<div class="win-type-cell total-cell">
+            <div class="win-count total">${totalWins}</div>
+        </div>`;
+        
+        html += '</div>';
+    });
+
+    html += '</div>';
+    winTypesTable.innerHTML = html;
+}
+
 function displayFullStatistics() {
     const resultsDiv = document.getElementById('fullStatisticsResults');
     if (resultsDiv) resultsDiv.style.display = 'block';
     
     displayStrategyRankings();
+    displayWinTypes(); // ADD THIS LINE
     displayMatchupMatrix();
     displayDetailedResults();
 }
@@ -2198,3 +2349,210 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize game
     initGame();
 });
+
+// Custom Select Implementation
+class CustomSelect {
+    constructor(element) {
+        this.element = element;
+        this.trigger = element.querySelector('.select-trigger');
+        this.options = element.querySelector('.select-options');
+        this.optionElements = element.querySelectorAll('.select-option');
+        this.name = element.dataset.name;
+        this.selectedValue = null;
+        this.selectedText = null;
+        
+        // Get initial selected option
+        const initialSelected = element.querySelector('.select-option.selected');
+        if (initialSelected) {
+            this.selectedValue = initialSelected.dataset.value;
+            this.selectedText = initialSelected.querySelector('span:last-child').textContent;
+        }
+        
+        this.init();
+    }
+    
+    init() {
+        // Click on trigger to open/close
+        this.trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggle();
+        });
+        
+        // Click on options
+        this.optionElements.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.selectOption(option);
+            });
+        });
+        
+        // Click outside to close
+        document.addEventListener('click', (e) => {
+            // Check if click is outside both trigger and options
+            if (!this.trigger.contains(e.target) && !this.options.contains(e.target)) {
+                this.close();
+            }
+        });
+        
+        // Close on scroll to reposition
+        window.addEventListener('scroll', () => {
+            if (this.options.classList.contains('show')) {
+                this.close();
+            }
+        });
+        
+        // Close on window resize
+        window.addEventListener('resize', () => {
+            if (this.options.classList.contains('show')) {
+                this.close();
+            }
+        });
+        
+        // Prevent clicks inside options from closing
+        this.options.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+    
+    toggle() {
+        if (this.options.classList.contains('show')) {
+            this.close();
+        } else {
+            this.open();
+        }
+    }
+    
+    open() {
+        // Close other dropdowns first
+        document.querySelectorAll('.custom-select .select-options.show').forEach(other => {
+            if (other !== this.options) {
+                other.classList.remove('show');
+                other.parentElement.querySelector('.select-trigger').classList.remove('active');
+                other.parentElement.classList.remove('active');
+            }
+        });
+        
+        // Get trigger position for absolute positioning
+        const triggerRect = this.trigger.getBoundingClientRect();
+        this.options.style.position = 'fixed';
+        this.options.style.top = (triggerRect.bottom + 4) + 'px';
+        this.options.style.left = triggerRect.left + 'px';
+        this.options.style.width = triggerRect.width + 'px';
+        this.options.style.zIndex = '999999';
+        
+        this.options.classList.add('show');
+        this.trigger.classList.add('active');
+        this.element.classList.add('active');
+        
+        // Append to body to ensure it's on top
+        document.body.appendChild(this.options);
+    }
+    
+    close() {
+        this.options.classList.remove('show');
+        this.trigger.classList.remove('active');
+        this.element.classList.remove('active');
+        
+        // Move options back to original container
+        if (this.options.parentElement === document.body) {
+            this.element.appendChild(this.options);
+            this.options.style.position = 'absolute';
+            this.options.style.top = '100%';
+            this.options.style.left = '0';
+            this.options.style.width = '100%';
+        }
+    }
+    
+    selectOption(option) {
+        // Remove previous selection
+        this.optionElements.forEach(opt => opt.classList.remove('selected'));
+        
+        // Add selection to clicked option
+        option.classList.add('selected');
+        
+        // Update values
+        this.selectedValue = option.dataset.value;
+        this.selectedText = option.querySelector('span:last-child').textContent;
+        
+        // Update trigger text
+        this.trigger.querySelector('span').textContent = this.selectedText;
+        
+        // Close dropdown
+        this.close();
+        
+        // Trigger custom event for compatibility with existing code
+        this.element.dispatchEvent(new CustomEvent('change', {
+            detail: {
+                name: this.name,
+                value: this.selectedValue,
+                text: this.selectedText
+            }
+        }));
+        
+        // Also trigger a change event on a hidden input if needed for form compatibility
+        const hiddenInput = document.getElementById(this.name);
+        if (hiddenInput) {
+            hiddenInput.value = this.selectedValue;
+            hiddenInput.dispatchEvent(new Event('change'));
+        }
+    }
+    
+    // Method to get current value (for existing code compatibility)
+    getValue() {
+        return this.selectedValue;
+    }
+    
+    // Method to set value programmatically
+    setValue(value) {
+        const option = this.element.querySelector(`[data-value="${value}"]`);
+        if (option) {
+            this.selectOption(option);
+        }
+    }
+}
+
+// Initialize all custom selects when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Create hidden inputs for form compatibility
+    const customSelects = document.querySelectorAll('.custom-select');
+    customSelects.forEach(element => {
+        const name = element.dataset.name;
+        if (!document.getElementById(name)) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.id = name;
+            hiddenInput.name = name;
+            element.appendChild(hiddenInput);
+        }
+        
+        // Initialize custom select
+        element.customSelectInstance = new CustomSelect(element);
+    });
+});
+
+// Helper functions for existing code compatibility
+function getSelectValue(selectId) {
+    const customSelect = document.getElementById(selectId + 'Select');
+    if (customSelect && customSelect.customSelectInstance) {
+        return customSelect.customSelectInstance.getValue();
+    }
+    // Fallback to hidden input
+    const hiddenInput = document.getElementById(selectId);
+    return hiddenInput ? hiddenInput.value : null;
+}
+
+function setSelectValue(selectId, value) {
+    const customSelect = document.getElementById(selectId + 'Select');
+    if (customSelect && customSelect.customSelectInstance) {
+        customSelect.customSelectInstance.setValue(value);
+    }
+}
+
+// Override existing select access methods for compatibility
+window.getAiDifficulty = () => getSelectValue('aiDifficulty') || '4';
+window.getAiStrategy = () => getSelectValue('aiStrategy') || 'pattern';
+window.getSharedDepth = () => getSelectValue('sharedDepth') || '4';
+window.getAiXStrategy = () => getSelectValue('aiXStrategy') || 'aggressive';
+window.getAiOStrategy = () => getSelectValue('aiOStrategy') || 'defensive';
+window.getTestDepth = () => getSelectValue('testDepth') || '4';
+window.getGamesPerCombo = () => getSelectValue('gamesPerCombo') || '10';
