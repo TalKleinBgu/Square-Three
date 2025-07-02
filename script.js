@@ -683,16 +683,19 @@ function enhancedVictoryAnimation(player) {
         navigator.vibrate([200, 100, 200]);
     }
 }
-function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRandomness = true, gameNumber = 0) {
+function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRandomness = true, gameNumber = 0, startTime = Date.now(), maxTime = 5000) {
+    // בדיקת timeout
+    if (Date.now() - startTime > maxTime) {
+        console.warn('Minimax timeout reached');
+        return [evalFunc(game, me, opp), null];
+    }
+    
     if (game.wins(me)) return [10000 - depth, null];
     if (game.wins(opp)) return [-10000 + depth, null];
     if (depth === 0 || game.isFull()) {
         let score = evalFunc(game, me, opp);
-        // Add evaluation noise and game-specific variation
         if (useRandomness) {
-            // Stronger noise for more variation
             const noise = score * 0.15 * (Math.random() * 2 - 1);
-            // Add game-specific deterministic variation based on game number
             const gameVariation = score * 0.1 * Math.sin(gameNumber * 0.7 + depth);
             score += noise + gameVariation;
         }
@@ -701,7 +704,6 @@ function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRan
 
     const moves = game.legalMoves();
     
-    // Handle case where no legal moves are available
     if (moves.length === 0) {
         let score = evalFunc(game, me, opp);
         if (useRandomness) {
@@ -712,7 +714,6 @@ function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRan
         return [score, null];
     }
 
-    // Randomize move order to prevent deterministic patterns
     if (useRandomness) {
         for (let i = moves.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -725,8 +726,13 @@ function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRan
     if (maximizing) {
         let value = -Infinity;
         for (const move of moves) {
+            // בדיקת timeout בתוך הלולאה
+            if (Date.now() - startTime > maxTime) {
+                break;
+            }
+            
             const prev = game.play(move, me);
-            const [score] = minimax(game, depth - 1, alpha, beta, false, me, opp, evalFunc, useRandomness, gameNumber);
+            const [score] = minimax(game, depth - 1, alpha, beta, false, me, opp, evalFunc, useRandomness, gameNumber, startTime, maxTime);
             game.undo(move, prev);
             
             moveScores.push({ move, score });
@@ -735,24 +741,26 @@ function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRan
             if (beta <= alpha) break;
         }
         
-        // Ensure we have valid moveScores before processing
         if (moveScores.length === 0) {
-            return [evalFunc(game, me, opp), null];
+            return [evalFunc(game, me, opp), moves[0]];
         }
         
-        // Enhanced randomness: select from top moves with weighted probability
         if (useRandomness) {
             const bestScore = Math.max(...moveScores.map(ms => ms.score));
-            const tolerance = 10; // Allow moves within 10 points of best
+            const tolerance = 10;
             const goodMoves = moveScores.filter(ms => ms.score >= bestScore - tolerance);
             
             if (goodMoves.length === 0) {
                 return [moveScores[0].score, moveScores[0].move];
             }
             
-            // Weighted selection: better moves have higher probability
             const weights = goodMoves.map(ms => Math.exp((ms.score - bestScore + tolerance) / 10));
             const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+            
+            if (totalWeight === 0) {
+                return [goodMoves[0].score, goodMoves[0].move];
+            }
+            
             const random = Math.random() * totalWeight;
             
             let weightSum = 0;
@@ -773,8 +781,12 @@ function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRan
     } else {
         let value = Infinity;
         for (const move of moves) {
+            if (Date.now() - startTime > maxTime) {
+                break;
+            }
+            
             const prev = game.play(move, opp);
-            const [score] = minimax(game, depth - 1, alpha, beta, true, me, opp, evalFunc, useRandomness, gameNumber);
+            const [score] = minimax(game, depth - 1, alpha, beta, true, me, opp, evalFunc, useRandomness, gameNumber, startTime, maxTime);
             game.undo(move, prev);
             
             moveScores.push({ move, score });
@@ -783,12 +795,10 @@ function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRan
             if (beta <= alpha) break;
         }
         
-        // Ensure we have valid moveScores before processing
         if (moveScores.length === 0) {
-            return [evalFunc(game, me, opp), null];
+            return [evalFunc(game, me, opp), moves[0]];
         }
         
-        // Enhanced randomness for minimizing player
         if (useRandomness) {
             const bestScore = Math.min(...moveScores.map(ms => ms.score));
             const tolerance = 10;
@@ -798,9 +808,13 @@ function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRan
                 return [moveScores[0].score, moveScores[0].move];
             }
             
-            // Weighted selection for minimizing player
             const weights = goodMoves.map(ms => Math.exp(-(ms.score - bestScore + tolerance) / 10));
             const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+            
+            if (totalWeight === 0) {
+                return [goodMoves[0].score, goodMoves[0].move];
+            }
+            
             const random = Math.random() * totalWeight;
             
             let weightSum = 0;
@@ -821,12 +835,48 @@ function minimax(game, depth, alpha, beta, maximizing, me, opp, evalFunc, useRan
     }
 }
 
-function chooseMove(game, player, depth, strategy, useRandomness = true) {
-    const me = player;
-    const opp = player === 'X' ? 'O' : 'X';
-    const evalFunc = getEvalFunction(strategy);
-    const [, move] = minimax(game, depth, -Infinity, Infinity, true, me, opp, evalFunc, useRandomness);
-    return move;
+function chooseMove(game, player, depth, strategy, useRandomness = true, gameNumber = 0) {
+    const startTime = Date.now();
+    const MAX_THINKING_TIME = 3000; // הקטנת הזמן ל-3 שניות
+    
+    try {
+        // בדיקות בסיסיות
+        if (!game || !player || gameEnded) {
+            console.warn('Invalid chooseMove parameters');
+            const legalMoves = game ? game.legalMoves() : [];
+            return legalMoves.length > 0 ? legalMoves[0] : null;
+        }
+        
+        const me = player;
+        const opp = player === 'X' ? 'O' : 'X';
+        const evalFunc = getEvalFunction(strategy);
+        
+        // בדיקה שה-evalFunc תקין
+        if (typeof evalFunc !== 'function') {
+            console.warn(`Invalid eval function for strategy: ${strategy}, using pattern`);
+            const evalFunc = evalPattern;
+        }
+        
+        const moves = game.legalMoves();
+        if (moves.length === 0) {
+            return null;
+        }
+        
+        // אם יש רק מהלך אחד, החזר אותו מיידית
+        if (moves.length === 1) {
+            return moves[0];
+        }
+        
+        const [, move] = minimax(game, Math.min(depth, 4), -Infinity, Infinity, true, me, opp, evalFunc, useRandomness, gameNumber, startTime, MAX_THINKING_TIME);
+        
+        return move !== null ? move : moves[0];
+        
+    } catch (error) {
+        console.error('Error in chooseMove:', error);
+        // fallback - בחירת מהלך אקראי
+        const legalMoves = game ? game.legalMoves() : [];
+        return legalMoves.length > 0 ? legalMoves[Math.floor(Math.random() * legalMoves.length)] : null;
+    }
 }
 
 // Game State
@@ -1001,14 +1051,55 @@ function setGameMode(mode) {
     if (pauseBtn) pauseBtn.style.display = 'none';
     
     // Show/hide game controls based on mode
+
+    // Show/hide game controls based on mode
+// Show/h
+// Show/hide game controls based on mode
     if (gameControls) {
         if (mode === 'statistics') {
-            gameControls.classList.add('hidden');
+            // הסתר את האלמנטים
+            const board = document.getElementById('board');
+            const gameInfo = document.querySelector('.game-info');
+            const gameStatus = document.getElementById('gameStatus');
+            const hotBlockingContainer = document.getElementById('hotBlockingContainer');
+            const gameActions = document.querySelector('.game-actions'); // הוסף את זה
+            
+            if (board) board.style.display = 'none';
+            if (gameInfo) gameInfo.style.display = 'none';
+            if (gameStatus) gameStatus.style.display = 'none';
+            if (hotBlockingContainer) hotBlockingContainer.style.display = 'none';
+            if (gameActions) gameActions.style.display = 'none'; // הוסף את זה
+            
+            // הוסף spacer להחזיק את הגובה
+            let spacer = document.getElementById('statisticsSpacer');
+            if (!spacer) {
+                spacer = document.createElement('div');
+                spacer.id = 'statisticsSpacer';
+                spacer.style.height = '400px'; // גובה קבוע
+                spacer.style.visibility = 'hidden';
+                gameControls.appendChild(spacer);
+            }
+            
+            gameControls.classList.remove('hidden');
         } else {
+            // הצג הכל חזרה והסר את ה-spacer
+            const board = document.getElementById('board');
+            const gameInfo = document.querySelector('.game-info');
+            const gameStatus = document.getElementById('gameStatus');
+            const hotBlockingContainer = document.getElementById('hotBlockingContainer');
+            const gameActions = document.querySelector('.game-actions'); // הוסף את זה
+            const spacer = document.getElementById('statisticsSpacer');
+            
+            if (board) board.style.display = 'grid';
+            if (gameInfo) gameInfo.style.display = 'flex';
+            if (gameStatus) gameStatus.style.display = 'block';
+            if (hotBlockingContainer) hotBlockingContainer.style.display = 'block';
+            if (gameActions) gameActions.style.display = 'flex'; // הוסף את זה
+            if (spacer) spacer.remove();
+            
             gameControls.classList.remove('hidden');
         }
     }
-    
     if (mode === 'ai') {
         if (aiSettings) aiSettings.classList.add('show');
         if (humanVsAiSettings) humanVsAiSettings.style.display = 'block';
@@ -1036,6 +1127,11 @@ function resetGame() {
     if (pauseBtn) pauseBtn.style.display = 'none';
     if (fullStatsBtn) fullStatsBtn.style.display = 'inline-block';
     if (stopStatsBtn) stopStatsBtn.style.display = 'none';
+    
+    const board = document.getElementById('board');
+    if (board) {
+        board.style.pointerEvents = 'auto';
+    }
     
     if (gameMode !== 'statistics') {
         initGame();
@@ -1155,8 +1251,8 @@ function updateDisplay() {
     }
 }
 function makeMove(index) {
-    if (gameMode === 'statistics') return; // No manual moves in statistics mode
-    if (gameMode === 'aivsai') return; // No manual moves in AI vs AI mode
+    if (gameMode === 'statistics') return; 
+    if (gameMode === 'aivsai') return; 
     if (gameEnded || game.board[index] !== '.' || !game.legalMoves().includes(index)) {
         return;
     }
@@ -1165,22 +1261,50 @@ function makeMove(index) {
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     updateDisplay();
 
-    // AI move for Human vs AI mode
+    // AI move for Human vs AI mode - תיקון עיקרי
     if (gameMode === 'ai' && currentPlayer === 'O' && !gameEnded) {
+        // בלוק ה-UI מיידית למניעת לחיצות נוספות
+        const board = document.getElementById('board');
+        if (board) {
+            board.style.pointerEvents = 'none';
+        }
+        
         setTimeout(() => {
-            aiDifficulty = parseInt(document.getElementById('aiDifficulty').value);
-            aiStrategy = document.getElementById('aiStrategy').value;
-            const aiMove = chooseMove(game, 'O', aiDifficulty, aiStrategy, false);
-            if (aiMove !== null) {
-                game.play(aiMove, 'O');
-                currentPlayer = 'X';
-                updateDisplay();
+            // בדיקה נוספת שהמשחק עדיין במצב הנכון
+            if (gameEnded || gameMode !== 'ai' || currentPlayer !== 'O') {
+                // שחרור ה-UI אם המצב השתנה
+                if (board) {
+                    board.style.pointerEvents = 'auto';
+                }
+                return;
             }
-        }, 500);  // <-- Remove this 500ms delay!
+            
+            try {
+                // קבלת ערכים מ-custom selects בצורה בטוחה
+                const difficulty = getSelectValue('aiDifficulty') || '4';
+                const strategy = getSelectValue('aiStrategy') || 'pattern';
+                
+                const aiMove = chooseMove(game, 'O', parseInt(difficulty), strategy, false);
+                if (aiMove !== null && !gameEnded && gameMode === 'ai') {
+                    game.play(aiMove, 'O');
+                    currentPlayer = 'X';
+                    updateDisplay();
+                }
+            } catch (error) {
+                console.error('Error in AI move:', error);
+            } finally {
+                // שחרור ה-UI בכל מקרה
+                if (board) {
+                    board.style.pointerEvents = 'auto';
+                }
+            }
+        }, 500);
     }
 }
 
 function startAiVsAi() {
+    console.log("Starting AI vs AI..."); // לבדיקה
+
     if (gameEnded) {
         resetGame();
     }
@@ -1224,44 +1348,56 @@ function runAiVsAi(fastMode = false) {
         return;
     }
 
-    const strategy = currentPlayer === 'X' ? aiXStrategy : aiOStrategy;
-    const useRandomness = true; // Always use randomness in AI vs AI for variety
-    const aiMove = chooseMove(game, currentPlayer, sharedDepth, strategy, useRandomness);
-    
-    if (aiMove !== null) {
-        game.play(aiMove, currentPlayer);
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        updateDisplay();
+    try {
+        const strategy = currentPlayer === 'X' ? aiXStrategy : aiOStrategy;
+        const useRandomness = true;
         
-        // Check if game ended
-        if (game.wins('X') || game.wins('O') || game.isFull() || game.legalMoves().length === 0) {
+        const aiMove = chooseMove(game, currentPlayer, sharedDepth, strategy, useRandomness);
+        
+        if (aiMove !== null && !gameEnded && aiVsAiRunning) {
+            game.play(aiMove, currentPlayer);
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            updateDisplay();
+            
+            // Check if game ended
+            if (game.wins('X') || game.wins('O') || game.isFull() || game.legalMoves().length === 0) {
+                aiVsAiRunning = false;
+                gameEnded = true; // הוספה חשובה
+                
+                if (fullStatsRunning) {
+                    recordStatGameResult();
+                } else {
+                    const pauseBtn = document.getElementById('pauseBtn');
+                    if (pauseBtn) pauseBtn.style.display = 'none';
+                }
+                return;
+            }
+            
+            // Continue with next move
+            const delay = fastMode ? 50 : (fullStatsRunning ? 100 : 800); // הקטנת הזמן
+            setTimeout(() => {
+                if (aiVsAiRunning && !gameEnded) {
+                    runAiVsAi(fastMode);
+                }
+            }, delay);
+        } else {
+            // No legal moves available
             aiVsAiRunning = false;
+            gameEnded = true;
             
             if (fullStatsRunning) {
                 recordStatGameResult();
             } else {
                 const pauseBtn = document.getElementById('pauseBtn');
                 if (pauseBtn) pauseBtn.style.display = 'none';
+                updateDisplay();
             }
-            return;
         }
-        
-        // Continue with next move
-        const delay = fastMode ? 50 : (fullStatsRunning ? 100 : 1500);
-        setTimeout(() => {
-            runAiVsAi(fastMode);
-        }, delay);
-    } else {
-        // No legal moves available
+    } catch (error) {
+        console.error('Error in runAiVsAi:', error);
         aiVsAiRunning = false;
-        
-        if (fullStatsRunning) {
-            recordStatGameResult();
-        } else {
-            const pauseBtn = document.getElementById('pauseBtn');
-            if (pauseBtn) pauseBtn.style.display = 'none';
-            updateDisplay();
-        }
+        const pauseBtn = document.getElementById('pauseBtn');
+        if (pauseBtn) pauseBtn.style.display = 'none';
     }
 }
 
