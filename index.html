@@ -40,33 +40,72 @@
     <div class="tutorial-arrow" id="tutorialArrow">👆</div>
     <div class="game-container">
         <h1>Square-Three</h1>
-        
         <div class="game-mode">
-            <button class="mode-btn active" onclick="setGameMode('human')">Human vs Human</button>
-            <button class="mode-btn" onclick="setGameMode('ai')">Human vs AI</button>
-            <button class="mode-btn" onclick="setGameMode('aivsai')">AI vs AI</button>
-            <button class="mode-btn" onclick="setGameMode('statistics')">Multi-Game Stats</button>
+            <button class="mode-btn active" onclick="setGameMode('human')">👥 Human vs Human</button>
+            <button class="mode-btn" onclick="setGameMode('ai')">🧠 Human vs AI</button>
+            <button class="mode-btn" onclick="setGameMode('aivsai')">🤖 AI vs AI</button>
+            <button class="mode-btn" onclick="setGameMode('statistics')">📊 Multi-Game Stats</button>
         </div>
 
         <div class="ai-settings" id="aiSettings">
             <div id="humanVsAiSettings", class = "depth-control">
                 <label>AI Difficulty:</label>
-                <select class="difficulty-select" id="aiDifficulty">
-                    <option value="2">Very Easy (Depth 2)</option>
-                    <option value="3">Easy (Depth 3)</option>
-                    <option value="4" selected>Medium (Depth 4)</option>
-                    <option value="5">Hard (Depth 5)</option>
-                    <option value="6">Expert (Depth 6)</option>
-                </select>
+                <div class="custom-select difficulty-select" data-name="aiDifficulty" id="aiDifficultySelect">
+                    <div class="select-trigger">
+                        <span>Medium (Depth 4)</span>
+                    </div>
+                    <div class="select-options">
+                        <div class="select-option" data-value="2">
+                            <span class="checkmark">✓</span>
+                            <span>Very Easy (Depth 2)</span>
+                        </div>
+                        <div class="select-option" data-value="3">
+                            <span class="checkmark">✓</span>
+                            <span>Easy (Depth 3)</span>
+                        </div>
+                        <div class="select-option selected" data-value="4">
+                            <span class="checkmark">✓</span>
+                            <span>Medium (Depth 4)</span>
+                        </div>
+                        <div class="select-option" data-value="5">
+                            <span class="checkmark">✓</span>
+                            <span>Hard (Depth 5)</span>
+                        </div>
+                        <div class="select-option" data-value="6">
+                            <span class="checkmark">✓</span>
+                            <span>Expert (Depth 6)</span>
+                        </div>
+                    </div>
+                </div>
                 <div style="margin-top: 15px;">
                     <label>AI Strategy:</label>
-                    <select class="difficulty-select" id="aiStrategy">
-                        <option value="pattern">Pattern-Based (Balanced)</option>
-                        <option value="aggressive">Aggressive (Attack Focus)</option>
-                        <option value="defensive">Defensive (Block Focus)</option>
-                        <option value="positional">Positional (Board Control)</option>
-                        <option value="material">Material (Token Count)</option>
-                    </select>
+                    <div class="custom-select difficulty-select" data-name="aiStrategy" id="aiStrategySelect">
+                        <div class="select-trigger">
+                            <span>Pattern-Based (Balanced)</span>
+                        </div>
+                        <div class="select-options">
+                            <div class="select-option selected" data-value="pattern">
+                                <span class="checkmark">✓</span>
+                                <span>Pattern-Based (Balanced)</span>
+                            </div>
+                            <div class="select-option" data-value="aggressive">
+                                <span class="checkmark">✓</span>
+                                <span>Aggressive (Attack Focus)</span>
+                            </div>
+                            <div class="select-option" data-value="defensive">
+                                <span class="checkmark">✓</span>
+                                <span>Defensive (Block Focus)</span>
+                            </div>
+                            <div class="select-option" data-value="positional">
+                                <span class="checkmark">✓</span>
+                                <span>Positional (Board Control)</span>
+                            </div>
+                            <div class="select-option" data-value="material">
+                                <span class="checkmark">✓</span>
+                                <span>Material (Token Count)</span>
+                            </div>
+                        </div>
+                    </div>
                     <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 15px;">
                         <label>Hot Adjacency Blocking:</label>
                         <label class="toggle-switch">
@@ -79,13 +118,33 @@
             <div id="aiVsAiSettings" style="display: none;">
                 <div class="depth-control" >
                     <label>Search Depth (Both AIs):</label>
-                    <select class="difficulty-select" id="sharedDepth">
-                        <option value="2">Depth 2 (Very Fast)</option>
-                        <option value="3">Depth 3 (Fast)</option>
-                        <option value="4" selected>Depth 4 (Medium)</option>
-                        <option value="5">Depth 5 (Slow)</option>
-                        <option value="6">Depth 6 (Very Slow)</option>
-                    </select>
+                    <div class="custom-select difficulty-select" data-name="sharedDepth" id="sharedDepthSelect">
+                        <div class="select-trigger">
+                            <span>Depth 4 (Medium)</span>
+                        </div>
+                        <div class="select-options">
+                            <div class="select-option" data-value="2">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 2 (Very Fast)</span>
+                            </div>
+                            <div class="select-option" data-value="3">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 3 (Fast)</span>
+                            </div>
+                            <div class="select-option selected" data-value="4">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 4 (Medium)</span>
+                            </div>
+                            <div class="select-option" data-value="5">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 5 (Slow)</span>
+                            </div>
+                            <div class="select-option" data-value="6">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 6 (Very Slow)</span>
+                            </div>
+                        </div>
+                    </div>
                    <div style="display: flex; align-items: center; justify-content: center; gap: 10px;margin-top: 15px;">
                         <label>Hot Adjacency Blocking:</label>
                         <label class="toggle-switch">
@@ -98,13 +157,33 @@
                 <div class="ai-vs-ai-settings">
                     <div class="ai-config ai-x">
                         <h4 style="color: #ff6b6b;">AI X Strategy</h4>
-                        <select class="eval-select" id="aiXStrategy">
-                            <option value="pattern">Pattern-Based</option>
-                            <option value="aggressive" selected>Aggressive</option>
-                            <option value="defensive">Defensive</option>
-                            <option value="positional">Positional</option>
-                            <option value="material">Material</option>
-                        </select>
+                        <div class="custom-select eval-select" data-name="aiXStrategy" id="aiXStrategySelect">
+                            <div class="select-trigger">
+                                <span>Aggressive</span>
+                            </div>
+                            <div class="select-options">
+                                <div class="select-option" data-value="pattern">
+                                    <span class="checkmark">✓</span>
+                                    <span>Pattern-Based</span>
+                                </div>
+                                <div class="select-option selected" data-value="aggressive">
+                                    <span class="checkmark">✓</span>
+                                    <span>Aggressive</span>
+                                </div>
+                                <div class="select-option" data-value="defensive">
+                                    <span class="checkmark">✓</span>
+                                    <span>Defensive</span>
+                                </div>
+                                <div class="select-option" data-value="positional">
+                                    <span class="checkmark">✓</span>
+                                    <span>Positional</span>
+                                </div>
+                                <div class="select-option" data-value="material">
+                                    <span class="checkmark">✓</span>
+                                    <span>Material</span>
+                                </div>
+                            </div>
+                        </div>
                         <div class="eval-description" id="aiXDescription">
                             Focuses on creating winning threats and attacking patterns.
                         </div>
@@ -112,20 +191,40 @@
                     
                     <div class="ai-config ai-o">
                         <h4 style="color: #4ecdc4;">AI O Strategy</h4>
-                        <select class="eval-select" id="aiOStrategy">
-                            <option value="pattern">Pattern-Based</option>
-                            <option value="aggressive">Aggressive</option>
-                            <option value="defensive" selected>Defensive</option>
-                            <option value="positional">Positional</option>
-                            <option value="material">Material</option>
-                        </select>
+                        <div class="custom-select eval-select" data-name="aiOStrategy" id="aiOStrategySelect">
+                            <div class="select-trigger">
+                                <span>Defensive</span>
+                            </div>
+                            <div class="select-options">
+                                <div class="select-option" data-value="pattern">
+                                    <span class="checkmark">✓</span>
+                                    <span>Pattern-Based</span>
+                                </div>
+                                <div class="select-option" data-value="aggressive">
+                                    <span class="checkmark">✓</span>
+                                    <span>Aggressive</span>
+                                </div>
+                                <div class="select-option selected" data-value="defensive">
+                                    <span class="checkmark">✓</span>
+                                    <span>Defensive</span>
+                                </div>
+                                <div class="select-option" data-value="positional">
+                                    <span class="checkmark">✓</span>
+                                    <span>Positional</span>
+                                </div>
+                                <div class="select-option" data-value="material">
+                                    <span class="checkmark">✓</span>
+                                    <span>Material</span>
+                                </div>
+                            </div>
+                        </div>
                         <div class="eval-description" id="aiODescription">
                             Prioritizes blocking opponent threats and defensive play.
                         </div>
                     </div>
                 </div>
                 
-                <div style="margin-top: 15px; text-align: center;">
+                <div class="ai-battle-controls">
                     <button class="mode-btn primary-button" onclick="startAiVsAi()">Start AI Battle</button>
                     <button class="mode-btn primary-button" onclick="pauseAiVsAi()" id="pauseBtn" style="display: none;">Pause</button>
                 </div>
@@ -136,23 +235,60 @@
             <div class="depth-control">
                 <div style="margin-bottom: 16px;">
                     <label>Test Depth (Both AIs):</label>
-                    <select class="difficulty-select" id="testDepth">
-                        <option value="2">Depth 2 (Very Fast)</option>
-                        <option value="3">Depth 3 (Fast)</option>
-                        <option value="4" selected>Depth 4 (Medium)</option>
-                        <option value="5">Depth 5 (Slow)</option>
-                        <option value="6">Depth 6 (Very Slow)</option>
-                    </select>
+                    <div class="custom-select difficulty-select" data-name="testDepth" id="testDepthSelect">
+                        <div class="select-trigger">
+                            <span>Depth 4 (Medium)</span>
+                        </div>
+                        <div class="select-options">
+                            <div class="select-option" data-value="2">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 2 (Very Fast)</span>
+                            </div>
+                            <div class="select-option" data-value="3">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 3 (Fast)</span>
+                            </div>
+                            <div class="select-option selected" data-value="4">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 4 (Medium)</span>
+                            </div>
+                            <div class="select-option" data-value="5">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 5 (Slow)</span>
+                            </div>
+                            <div class="select-option" data-value="6">
+                                <span class="checkmark">✓</span>
+                                <span>Depth 6 (Very Slow)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 16px;">
                     <label>Number of Games per Combination:</label>
-                    <select class="difficulty-select" id="gamesPerCombo">
-                        <option value="5">5 Games (Quick)</option>
-                        <option value="10" selected>10 Games (Standard)</option>
-                        <option value="20">20 Games (Thorough)</option>
-                        <option value="50">50 Games (Comprehensive)</option>
-                    </select>
+                    <div class="custom-select difficulty-select" data-name="gamesPerCombo" id="gamesPerComboSelect">
+                        <div class="select-trigger">
+                            <span>10 Games (Standard)</span>
+                        </div>
+                        <div class="select-options">
+                            <div class="select-option" data-value="5">
+                                <span class="checkmark">✓</span>
+                                <span>5 Games (Quick)</span>
+                            </div>
+                            <div class="select-option selected" data-value="10">
+                                <span class="checkmark">✓</span>
+                                <span>10 Games (Standard)</span>
+                            </div>
+                            <div class="select-option" data-value="20">
+                                <span class="checkmark">✓</span>
+                                <span>20 Games (Thorough)</span>
+                            </div>
+                            <div class="select-option" data-value="50">
+                                <span class="checkmark">✓</span>
+                                <span>50 Games (Comprehensive)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
@@ -163,7 +299,6 @@
                     </label>
                 </div>
             </div>
-
 
             <div style="text-align: center; margin-bottom: 20px;">
                 <button class="mode-btn primary-button" onclick="startFullStatistics()" id="fullStatsBtn">
@@ -227,10 +362,9 @@
             <div class="board" id="board"></div>
 
             <div class="game-status" id="gameStatus"></div>
-        <div style="text-align: center; margin-top: 20px;">
+        <div class="game-actions">
             <button class="mode-btn primary-button" onclick="toggleRules()">📖 Game Rules</button>
             <button class="mode-btn primary-button" onclick="startTutorial()">📖 Instruction</button>
-
         </div>
         
         <div class="rules" style="display: none;">
@@ -246,6 +380,5 @@
         </div>
     </div>
     <script src="script.js"></script>
-
 </body>
 </html>
