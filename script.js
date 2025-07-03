@@ -1597,6 +1597,8 @@ function recordStatGameResult() {
         }
     }, 50);
 }
+
+
 // Function to determine win type - ADD THIS FUNCTION
 function getWinType(game, player) {
     // Check horizontal wins
