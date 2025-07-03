@@ -1936,24 +1936,39 @@ function displayMatchupMatrix() {
                     let performanceIcon = '', performanceText = '', cellColor = '';
                     
                     if (winRateInt >= 80) {
-                        performanceIcon = '🔥'; performanceText = 'Dominant'; cellColor = '#FF6B35';
+                        performanceIcon = '🔥'; performanceText = 'dominant'; cellColor = '#FF6B35';
                     } else if (winRateInt >= 70) {
-                        performanceIcon = '✨'; performanceText = 'Excellent'; cellColor = '#4ECDC4';
+                        performanceIcon = '✨'; performanceText = 'excellent'; cellColor = '#4ECDC4';
                     } else if (winRateInt >= 60) {
-                        performanceIcon = '👍'; performanceText = 'Good'; cellColor = '#45B7D1';
+                        performanceIcon = '👍'; performanceText = 'good'; cellColor = '#45B7D1';
                     } else if (winRateInt >= 40) {
-                        performanceIcon = '⚖️'; performanceText = 'Balanced'; cellColor = '#FFA07A';
+                        performanceIcon = '⚖️'; performanceText = 'balanced'; cellColor = '#FFA07A';
                     } else if (winRateInt >= 20) {
-                        performanceIcon = '😔'; performanceText = 'Struggling'; cellColor = '#FF7F7F';
+                        performanceIcon = '😔'; performanceText = 'struggling'; cellColor = '#FF7F7F';
                     } else {
-                        performanceIcon = '💔'; performanceText = 'Dominated'; cellColor = '#FF4757';
+                        performanceIcon = '💔'; performanceText = 'dominated'; cellColor = '#FF4757';
                     }
                     
                     if (strategy1 === strategy2) {
-                        performanceIcon = '🪞'; performanceText = 'Mirror'; cellColor = '#9B59B6';
+                        performanceIcon = '🪞'; performanceText = 'mirror'; cellColor = '#9B59B6';
                     }
-                    
-                    html += `<div class="matrix-cell-enhanced-clean"style="--accent:${cellColor} 
+                    let performanceClass;
+                    if (strategy1 === strategy2) {
+                        performanceClass = 'mirror';
+                    } else if (winRateInt >= 80) {
+                        performanceClass = 'dominant';
+                    } else if (winRateInt >= 70) {
+                        performanceClass = 'excellent';
+                    } else if (winRateInt >= 60) {
+                        performanceClass = 'good';
+                    } else if (winRateInt >= 40) {
+                        performanceClass = 'balanced';
+                    } else if (winRateInt >= 20) {
+                        performanceClass = 'struggling';
+                    } else {
+                        performanceClass = 'dominated';
+                    }
+                    html += `<div class="matrix-cell-enhanced-clean ${performanceClass}"style="--accent:${cellColor} 
                         "
                         title="${performanceIcon} ${info1.name} (🔴 X) vs ${info2.name} (🔵 O): ${performanceText} - ${result.wins} wins, ${result.losses} losses, ${result.draws} draws out of ${result.games} games">
                         <div class="cell-performance">
@@ -1994,7 +2009,8 @@ function displayMatchupMatrix() {
         matrixTable.innerHTML = html;
     }
 }
-// Enhanced Detailed Results with better formatting and visual elements
+
+
 function displayDetailedResults() {
     const strategies = fullStatsData.strategies;
     const detailsList = document.getElementById('detailsList');
@@ -2014,25 +2030,49 @@ function displayDetailedResults() {
         // Add detailed results content
         html += '<div class="detailed-results-container">';
         
-        // Table header
-        html += '<div class="detail-header-enhanced">';
-        html += '<div class="detail-col-matchup"><span>🥊</span><span>Matchup Details</span></div>';
-        html += '<div class="detail-col-stat"><span>🏆</span><span>Wins</span></div>';
-        html += '<div class="detail-col-stat"><span>💔</span><span>Losses</span></div>';
-        html += '<div class="detail-col-stat"><span>🤝</span><span>Draws</span></div>';
-        html += '<div class="detail-col-stat"><span>📈</span><span>Win Rate</span></div>';
-        html += '</div>';
-        
         // Group by X strategy
         strategies.forEach(strategy1 => {
             const info1 = strategyInfo[strategy1];
             
-            // Strategy section header
-            html += `<div class="strategy-section-header" style="border-left: 4px solid ${info1.color};">
-                <span class="section-icon">${info1.icon}</span>
-                <strong>${strategy1.charAt(0).toUpperCase() + strategy1.slice(1)} as X Player (First Move)</strong>
-            </div>`;
+            // Calculate total stats for this strategy
+            let totalWins = 0;
+            let totalLosses = 0;
+            let totalDraws = 0;
+            let totalGames = 0;
             
+            strategies.forEach(strategy2 => {
+                const result = fullStatsData.results[strategy1][strategy2];
+                if (result.games > 0) {
+                    totalWins += result.wins;
+                    totalLosses += result.losses;
+                    totalDraws += result.draws;
+                    totalGames += result.games;
+                }
+            });
+            
+            const totalWinRate = totalGames > 0 ? ((totalWins / totalGames) * 100).toFixed(1) : '0.0';
+            
+            // Create strategy row with stats and labels
+            html += `<div class="detail-item-enhanced strategy-total-row" style="border-left: 4px solid ${info1.color};">`;
+            html += `<div class="detail-col-matchup">
+                <div class="strategy-section-header">
+                    <span class="section-icon">${info1.icon}</span>
+                    <strong>${strategy1.charAt(0).toUpperCase() + strategy1.slice(1)}</strong>
+                </div>
+            </div>`;
+            html += `<div class="detail-col-stat stat-wins">🏆 ${totalWins} Wins</div>`;
+            html += `<div class="detail-col-stat stat-losses">💔 ${totalLosses} Losses</div>`;
+            html += `<div class="detail-col-stat stat-draws">🤝 ${totalDraws} Draws</div>`;
+            html += `<div class="detail-col-stat stat-winrate">
+                <span class="winrate-label">📈 Win Rate</span>
+                <span class="winrate-value">${totalWinRate}%</span>
+                <div class="mini-bar">
+                    <div class="mini-bar-fill" style="width: ${totalWinRate}%; background: linear-gradient(90deg, ${info1.color}40, ${info1.color});"></div>
+                </div>
+            </div>`;
+            html += '</div>';
+            
+            // Add matchup details for this strategy
             strategies.forEach(strategy2 => {
                 const result = fullStatsData.results[strategy1][strategy2];
                 if (result.games > 0) {
@@ -2047,11 +2087,9 @@ function displayDetailedResults() {
                     else if (winRateNum >= 40) { performanceClass = 'performance-average'; performanceIcon = '⚖️'; }
                     else { performanceClass = 'performance-poor'; performanceIcon = '❄️'; }
                     
-                    html += `<div class="detail-item-enhanced ${performanceClass}">`;
+                    html += `<div class="detail-item-enhanced ${performanceClass} opponent-row">`;
                     html += `<div class="detail-col-matchup">
                         <div class="matchup-visual">
-                            <span class="player-x" style="color: ${info1.color};">${info1.icon} ${strategy1.charAt(0).toUpperCase() + strategy1.slice(1)}</span>
-                            <span class="vs-text">vs</span>
                             <span class="player-o" style="color: ${info2.color};">${info2.icon} ${strategy2.charAt(0).toUpperCase() + strategy2.slice(1)}</span>
                         </div>
                     </div>`;
@@ -2068,6 +2106,9 @@ function displayDetailedResults() {
                     html += '</div>';
                 }
             });
+            
+            // Add spacing between strategy sections
+            html += '<div style="height: 30px;"></div>';
         });
         
         html += '</div>';
