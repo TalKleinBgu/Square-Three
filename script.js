@@ -921,6 +921,8 @@ let fullStatsData = {
     gamesPerCombo: 10,
     testDepth: 2
 };
+let fullStatsPaused = false;
+let tempStatsResults = null;
 
 // Strategy descriptions
 const strategyDescriptions = {
@@ -1427,7 +1429,9 @@ function runAiVsAi(fastMode = false) {
 
 // Full Statistics Functions
 function startFullStatistics() {
+    
     fullStatsRunning = true;
+    fullStatsPaused = false; // Add this line
     const gamesPerCombo = parseInt(getSelectValue('gamesPerCombo')) || 10;
     const testDepth = parseInt(getSelectValue('testDepth')) || 2;
     // Initialize full stats data
@@ -1463,15 +1467,16 @@ function startFullStatistics() {
         });
     });
     
-    // Show progress and hide results
     const progressDiv = document.getElementById('statisticsProgress');
     const resultsDiv = document.getElementById('fullStatisticsResults');
     const fullStatsBtn = document.getElementById('fullStatsBtn');
+    const pauseStatsBtn = document.getElementById('pauseStatsBtn'); // Add this
     const stopStatsBtn = document.getElementById('stopStatsBtn');
     
     if (progressDiv) progressDiv.style.display = 'block';
     if (resultsDiv) resultsDiv.style.display = 'none';
     if (fullStatsBtn) fullStatsBtn.style.display = 'none';
+    if (pauseStatsBtn) pauseStatsBtn.style.display = 'inline-block'; // Add this
     if (stopStatsBtn) stopStatsBtn.style.display = 'inline-block';
     
     runNextStatCombo();
@@ -1479,15 +1484,21 @@ function startFullStatistics() {
 
 function stopFullStatistics() {
     fullStatsRunning = false;
+    fullStatsPaused = false;
     aiVsAiRunning = false;
     
+    // Update button visibility - Show only Run button
     const progressDiv = document.getElementById('statisticsProgress');
     const fullStatsBtn = document.getElementById('fullStatsBtn');
+    const pauseStatsBtn = document.getElementById('pauseStatsBtn');
+    const resumeStatsBtn = document.getElementById('resumeStatsBtn');
     const stopStatsBtn = document.getElementById('stopStatsBtn');
     
     if (progressDiv) progressDiv.style.display = 'none';
-    if (fullStatsBtn) fullStatsBtn.style.display = 'inline-block';
-    if (stopStatsBtn) stopStatsBtn.style.display = 'none';
+    if (fullStatsBtn) fullStatsBtn.style.display = 'inline-block';  // Show Run button
+    if (pauseStatsBtn) pauseStatsBtn.style.display = 'none';        // Hide Pause button
+    if (resumeStatsBtn) resumeStatsBtn.style.display = 'none';      // Hide Resume button
+    if (stopStatsBtn) stopStatsBtn.style.display = 'none';         // Hide Stop button
     
     // Show partial results if any data exists
     if (fullStatsData.currentCombo > 0) {
@@ -1531,7 +1542,7 @@ function runNextStatCombo() {
 }
 
 function runNextStatGame() {
-    if (!fullStatsRunning) return;
+     if (!fullStatsRunning || fullStatsPaused) return;
     
     if (fullStatsData.currentGameInCombo >= fullStatsData.gamesPerCombo) {
         // This combination is complete, move to next
@@ -2116,6 +2127,57 @@ function displayDetailedResults() {
         detailsList.innerHTML = html;
     }
 }
+function pauseFullStatistics() {
+    fullStatsPaused = true;
+    
+    // Update button visibility - Show only Resume and Stop buttons
+    const fullStatsBtn = document.getElementById('fullStatsBtn');
+    const pauseStatsBtn = document.getElementById('pauseStatsBtn');
+    const resumeStatsBtn = document.getElementById('resumeStatsBtn');
+    const stopStatsBtn = document.getElementById('stopStatsBtn');
+    
+    if (fullStatsBtn) fullStatsBtn.style.display = 'none';        // Hide Run button
+    if (pauseStatsBtn) pauseStatsBtn.style.display = 'none';      // Hide Pause button
+    if (resumeStatsBtn) resumeStatsBtn.style.display = 'inline-block'; // Show Resume button
+    if (stopStatsBtn) stopStatsBtn.style.display = 'inline-block';     // Show Stop button
+    
+    // Show partial results
+    displayPartialStatistics();
+}
+
+function resumeFullStatistics() {
+    fullStatsPaused = false;
+    
+    // Update button visibility - Show only Pause and Stop buttons
+    const fullStatsBtn = document.getElementById('fullStatsBtn');
+    const pauseStatsBtn = document.getElementById('pauseStatsBtn');
+    const resumeStatsBtn = document.getElementById('resumeStatsBtn');
+    const stopStatsBtn = document.getElementById('stopStatsBtn');
+    const resultsDiv = document.getElementById('fullStatisticsResults');
+    
+    if (fullStatsBtn) fullStatsBtn.style.display = 'none';         // Keep Run button hidden
+    if (pauseStatsBtn) pauseStatsBtn.style.display = 'inline-block'; // Show Pause button
+    if (resumeStatsBtn) resumeStatsBtn.style.display = 'none';     // Hide Resume button  
+    if (stopStatsBtn) stopStatsBtn.style.display = 'inline-block'; // Keep Stop button
+    if (resultsDiv) resultsDiv.style.display = 'none';            // Hide results while running
+    
+    // Continue with statistics
+    if (fullStatsRunning) {
+        setTimeout(() => runNextStatGame(), 100);
+    }
+}
+
+function displayPartialStatistics() {
+    const resultsDiv = document.getElementById('fullStatisticsResults');
+    if (resultsDiv) resultsDiv.style.display = 'block';
+    
+    // Display current results even if incomplete
+    displayStrategyRankings();
+    displayWinTypes(); 
+    displayMatchupMatrix();
+    displayDetailedResults();
+}
+
 
 const TABLE_HEADERS = {
     rankings: {
