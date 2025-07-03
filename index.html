@@ -302,13 +302,11 @@
                 </div>
             </div>
 
-            <div style="text-align: center; margin-bottom: 20px;">
-                <button class="mode-btn primary-button" onclick="startFullStatistics()" id="fullStatsBtn">
-                    Run Full Statistics Test
-                </button>
-                <button class="mode-btn primary-button" onclick="stopFullStatistics()" id="stopStatsBtn" style="display: none;">
-                    Stop Test
-                </button>
+            <div style="text-align: center; margin: 20px 0;">
+                <button id="fullStatsBtn" class="mode-btn primary-button" onclick="startFullStatistics()">🚀 Run Full Statistics Test</button>
+                <button id="pauseStatsBtn" class="mode-btn primary-button" onclick="pauseFullStatistics()" style="display: none; background: linear-gradient(135deg, #FF9500, #FF8C00);">⏸️ Pause Test</button>
+                <button id="resumeStatsBtn" class="mode-btn primary-button" onclick="resumeFullStatistics()" style="display: none; background: linear-gradient(135deg, #34C759, #30B256);">▶️ Resume Test</button>
+                <button id="stopStatsBtn" class="mode-btn primary-button" onclick="stopFullStatistics()" style="display: none; background: linear-gradient(135deg, #FF6B6B, #FF5252);">⏹️ Stop Test</button>
             </div>
 
             <div id="statisticsProgress" style="display: none; margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px;">
