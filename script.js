@@ -1648,28 +1648,6 @@ function updateStatProgress() {
 function displayWinTypes() {
     const strategies = fullStatsData.strategies;
     
-    // Create win types section in HTML if it doesn't exist
-    let winTypesSection = document.getElementById('winTypesResults');
-    if (!winTypesSection) {
-        const fullResults = document.getElementById('fullStatisticsResults');
-        if (fullResults) {
-            const winTypesHTML = `
-                <div id="winTypesResults" style="margin-bottom: 20px; background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 15px;">
-                    <h4 style="color: #FFD700; margin-bottom: 10px;">🎯 Win Type Distribution</h4>
-                    <div id="winTypesTable"></div>
-                </div>
-            `;
-            
-            // Insert after strategy rankings
-            const strategyRankings = document.getElementById('strategyRankings');
-            if (strategyRankings && strategyRankings.nextSibling) {
-                strategyRankings.insertAdjacentHTML('afterend', winTypesHTML);
-            } else if (fullResults.firstChild) {
-                fullResults.insertAdjacentHTML('afterbegin', winTypesHTML);
-            }
-        }
-    }
-
     const winTypesTable = document.getElementById('winTypesTable');
     if (!winTypesTable) return;
 
@@ -1680,10 +1658,16 @@ function displayWinTypes() {
         'positional': { icon: '♟️', color: '#AF52DE' },
         'material': { icon: '🔢', color: '#FF9500' }
     };
+    const grand = { horizontal:0, vertical:0, diagonal:0, square:0, wins:0 };
 
-    let html = '<div class="win-types-table">';
+    // Add enhanced header
+    let html = createEnhancedTableHeader('winTypes');
     
-    // Header
+    // Add win types table
+    html += '<div class="win-types-table-container">';
+    html += '<div class="win-types-table">';
+    
+    // Header row
     html += '<div class="win-types-header">';
     html += '<div class="win-type-header-cell">Strategy</div>';
     html += '<div class="win-type-header-cell">🟰 Horizontal</div>';
@@ -1693,7 +1677,7 @@ function displayWinTypes() {
     html += '<div class="win-type-header-cell">📊 Total Wins</div>';
     html += '</div>';
 
-    // Calculate totals for each strategy
+    // Data rows
     strategies.forEach(strategy1 => {
         const info = strategyInfo[strategy1];
         let totalHorizontal = 0, totalVertical = 0, totalDiagonal = 0, totalSquare = 0, totalWins = 0;
@@ -1708,6 +1692,14 @@ function displayWinTypes() {
             totalSquare += winTypes.square;
             totalWins += results.wins;
         });
+        grand.horizontal += totalHorizontal;
+        grand.vertical += totalVertical;
+        grand.diagonal += totalDiagonal;
+        grand.square += totalSquare;
+        grand.wins += totalWins;
+
+        const pct = x => w ? ((x/w)*100).toFixed(1) : '0.0';
+
 
         html += '<div class="win-type-row">';
         html += `<div class="win-type-cell strategy-cell" style="border-left-color: ${info.color};">
@@ -1747,7 +1739,24 @@ function displayWinTypes() {
         html += '</div>';
     });
 
+        const gpct = x => grand.wins ? ((x/grand.wins)*100).toFixed(1) : '0.0';
+    html += `
+        <div class="win-type-row grand-total">
+            <div class="win-type-cell strategy-cell"
+                 style="border-left-color:#4A90E2;font-weight:700">
+                <span class="strategy-icon">📈</span>
+                <span class="strategy-name" style="color:#4A90E2">All Strategies</span>
+            </div>
+            <div class="win-type-cell"><div class="win-count">${grand.horizontal}</div><div class="win-percent">${gpct(grand.horizontal)}%</div></div>
+            <div class="win-type-cell"><div class="win-count">${grand.vertical}</div><div class="win-percent">${gpct(grand.vertical)}%</div></div>
+            <div class="win-type-cell"><div class="win-count">${grand.diagonal}</div><div class="win-percent">${gpct(grand.diagonal)}%</div></div>
+            <div class="win-type-cell"><div class="win-count">${grand.square}</div><div class="win-percent">${gpct(grand.square)}%</div></div>
+            <div class="win-type-cell total-cell"><div class="win-count total">${grand.wins}</div></div>
+        </div>`;
+
     html += '</div>';
+    html += '</div>';
+    
     winTypesTable.innerHTML = html;
 }
 
@@ -1756,7 +1765,7 @@ function displayFullStatistics() {
     if (resultsDiv) resultsDiv.style.display = 'block';
     
     displayStrategyRankings();
-    displayWinTypes(); // ADD THIS LINE
+    displayWinTypes(); 
     displayMatchupMatrix();
     displayDetailedResults();
 }
@@ -1798,7 +1807,6 @@ function displayStrategyRankings() {
     
     rankings.sort((a, b) => b.winRate - a.winRate);
     
-    // Strategy icons and colors
     const strategyInfo = {
         'pattern': { icon: '🎯', color: '#007AFF', description: 'Balanced' },
         'aggressive': { icon: '⚔️', color: '#FF3B30', description: 'Attacker' },
@@ -1807,35 +1815,40 @@ function displayStrategyRankings() {
         'material': { icon: '🔢', color: '#FF9500', description: 'Counter' }
     };
     
-    // Medal icons for rankings
     const medals = ['🥇', '🥈', '🥉', '🏅', '🏅'];
     
     const rankingsList = document.getElementById('rankingsList');
     if (rankingsList) {
-        rankingsList.innerHTML = rankings.map((rank, index) => {
+        // Add enhanced header
+        let html = createEnhancedTableHeader('rankings');
+        
+        // Add rankings directly without extra container
+        html += rankings.map((rank, index) => {
             const info = strategyInfo[rank.strategy];
             const medal = medals[index] || '🏅';
             const performanceClass = rank.winRate >= 60 ? 'excellent' : rank.winRate >= 50 ? 'good' : rank.winRate >= 40 ? 'average' : 'poor';
             
             return `
-                <div class="ranking-item enhanced ${performanceClass}" style="border-left: 4px solid ${info.color};">
-                    <div class="ranking-left">
+                <div class="ranking-item-enhanced ${performanceClass}" style="border-left: 4px solid ${info.color};">
+                    <div class="ranking-left-section">
                         <span class="ranking-medal">${medal}</span>
                         <span class="ranking-position">#${index + 1}</span>
-                        <div class="strategy-info">
+                        <div class="strategy-info-section">
                             <span class="strategy-icon">${info.icon}</span>
-                            <div class="strategy-details">
+                            <div class="strategy-details-section">
                                 <span class="strategy-name" style="color: ${info.color};">${rank.strategy.charAt(0).toUpperCase() + rank.strategy.slice(1)}</span>
                                 <span class="strategy-type">${info.description}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="ranking-stats-enhanced">
-                        <div class="win-rate-bar">
-                            <div class="win-rate-fill" style="width: ${rank.winRate}%; background: linear-gradient(90deg, ${info.color}40, ${info.color});"></div>
-                            <span class="win-rate-text">${rank.winRate.toFixed(1)}%</span>
+                    <div class="ranking-stats-section">
+                        <div class="win-rate-container">
+                            <div class="win-rate-bar">
+                                <div class="win-rate-fill" style="width: ${rank.winRate}%; background: linear-gradient(90deg, ${info.color}40, ${info.color});"></div>
+                                <span class="win-rate-text">${rank.winRate.toFixed(1)}%</span>
+                            </div>
                         </div>
-                        <div class="detailed-stats">
+                        <div class="detailed-stats-container">
                             <span class="stat-item wins">🏆 ${rank.totalWins}</span>
                             <span class="stat-item losses">💔 ${rank.totalLosses}</span>
                             <span class="stat-item draws">🤝 ${rank.totalDraws}</span>
@@ -1845,6 +1858,8 @@ function displayStrategyRankings() {
                 </div>
             `;
         }).join('');
+        
+        rankingsList.innerHTML = html;
     }
 }
 
@@ -1852,7 +1867,6 @@ function displayMatchupMatrix() {
     const strategies = fullStatsData.strategies;
     const matrixTable = document.getElementById('matrixTable');
     
-    // Strategy info with enhanced icons and colors
     const strategyInfo = {
         'pattern': { icon: '🎯', color: '#007AFF', bgColor: 'rgba(0, 122, 255, 0.15)', name: 'Pattern' },
         'aggressive': { icon: '⚔️', color: '#FF3B30', bgColor: 'rgba(255, 59, 48, 0.15)', name: 'Aggressive' },
@@ -1862,26 +1876,13 @@ function displayMatchupMatrix() {
     };
     
     if (matrixTable) {
-        let html = '<div class="matrix-table-enhanced">';
+        // Add enhanced header
+        let html = createEnhancedTableHeader('matrix');
         
-        // Enhanced title section with gradient and icons
-        html += '<div class="matrix-title-section">';
-        html += '<div class="matrix-main-title">';
-        html += '<span class="title-icon">🏆</span>';
-        html += '<h3>Head-to-Head Win Rate Matrix</h3>';
-        html += '<span class="title-icon">⚔️</span>';
-        html += '</div>';
-        html += '<div class="matrix-subtitle">';
-        html += '<div class="axis-explanation-fixed">';
-        html += '<div class="x-player-indicator-fixed">🔴 X Players (First Move)</div>';
-        html += '<div class="vs-divider">VS</div>';
-        html += '<div class="o-player-indicator-fixed">🔵 O Players (Second Move)</div>';
-        html += '</div>';
-        html += '<div class="reading-guide">💡 <em>Each cell shows X player\'s win rate against O player</em></div>';
-        html += '</div>';
-        html += '</div>';
+        // Add matrix table directly without extra container
+        html += '<div class="matrix-table-enhanced">';
         
-        // Enhanced corner header with gradient
+        // Corner header
         html += '<div class="matrix-corner-header">';
         html += '<div class="corner-content">';
         html += '<span class="corner-x">🔴 X</span>';
@@ -1890,10 +1891,10 @@ function displayMatchupMatrix() {
         html += '</div>';
         html += '</div>';
         
-        // Enhanced column headers (O players)
+        // Column headers (O players)
         strategies.forEach(strategy => {
             const info = strategyInfo[strategy];
-            html += `<div class="matrix-header-enhanced o-player" style="background: ${info.bgColor}; border-color: ${info.color};">
+            html += `<div class="matrix-header-enhanced o-player" style="border-top:4px solid ${info.color}; background-color:${info.bgColor}; ">
                 <div class="strategy-header-content">
                     <span class="strategy-player-icon">🔵</span>
                     <span class="strategy-icon">${info.icon}</span>
@@ -1905,12 +1906,12 @@ function displayMatchupMatrix() {
             </div>`;
         });
         
-        // Enhanced data rows
+        // Data rows
         strategies.forEach(strategy1 => {
             const info1 = strategyInfo[strategy1];
             
             // Row header (X player)
-            html += `<div class="matrix-header-enhanced x-player" style="background: ${info1.bgColor}; border-color: ${info1.color};">
+            html += `<div class="matrix-header-enhanced x-player" style="border-left:4px solid ${info1.color}; background-color:${info1.bgColor};">
                 <div class="strategy-header-content">
                     <span class="strategy-player-icon">🔴</span>
                     <span class="strategy-icon">${info1.icon}</span>
@@ -1921,10 +1922,9 @@ function displayMatchupMatrix() {
                 </div>
             </div>`;
             
-            // Data cells - NO BACKGROUND COLORS
+            // Data cells
             strategies.forEach(strategy2 => {
                 const result = fullStatsData.results[strategy1][strategy2];
-                const info1 = strategyInfo[strategy1];
                 const info2 = strategyInfo[strategy2];
                 
                 if (result.games === 0) {
@@ -1933,53 +1933,35 @@ function displayMatchupMatrix() {
                     const winRate = ((result.wins / result.games) * 100).toFixed(1);
                     const winRateInt = parseInt(winRate);
                     
-                    let cellClass = 'matrix-cell-enhanced-clean';
-                    let performanceIcon = '';
-                    let performanceText = '';
-                    let cellColor = '';
+                    let performanceIcon = '', performanceText = '', cellColor = '';
                     
                     if (winRateInt >= 80) {
-                        performanceIcon = '🔥';
-                        performanceText = 'Dominant';
-                        cellColor = '#FF6B35';
+                        performanceIcon = '🔥'; performanceText = 'Dominant'; cellColor = '#FF6B35';
                     } else if (winRateInt >= 70) {
-                        performanceIcon = '✨';
-                        performanceText = 'Excellent';
-                        cellColor = '#4ECDC4';
+                        performanceIcon = '✨'; performanceText = 'Excellent'; cellColor = '#4ECDC4';
                     } else if (winRateInt >= 60) {
-                        performanceIcon = '👍';
-                        performanceText = 'Good';
-                        cellColor = '#45B7D1';
+                        performanceIcon = '👍'; performanceText = 'Good'; cellColor = '#45B7D1';
                     } else if (winRateInt >= 40) {
-                        performanceIcon = '⚖️';
-                        performanceText = 'Balanced';
-                        cellColor = '#FFA07A';
+                        performanceIcon = '⚖️'; performanceText = 'Balanced'; cellColor = '#FFA07A';
                     } else if (winRateInt >= 20) {
-                        performanceIcon = '😔';
-                        performanceText = 'Struggling';
-                        cellColor = '#FF7F7F';
+                        performanceIcon = '😔'; performanceText = 'Struggling'; cellColor = '#FF7F7F';
                     } else {
-                        performanceIcon = '💔';
-                        performanceText = 'Dominated';
-                        cellColor = '#FF4757';
+                        performanceIcon = '💔'; performanceText = 'Dominated'; cellColor = '#FF4757';
                     }
                     
-                    // Special styling for mirror matches
                     if (strategy1 === strategy2) {
-                        performanceIcon = '🪞';
-                        performanceText = 'Mirror';
-                        cellColor = '#9B59B6';
+                        performanceIcon = '🪞'; performanceText = 'Mirror'; cellColor = '#9B59B6';
                     }
                     
-                    html += `<div class="${cellClass}" 
-                        style="border-left-color: ${info1.color}; border-top-color: ${info2.color};"
+                    html += `<div class="matrix-cell-enhanced-clean"style="--accent:${cellColor} 
+                        "
                         title="${performanceIcon} ${info1.name} (🔴 X) vs ${info2.name} (🔵 O): ${performanceText} - ${result.wins} wins, ${result.losses} losses, ${result.draws} draws out of ${result.games} games">
                         <div class="cell-performance">
                             <span class="performance-indicator" style="color: ${cellColor};">${performanceIcon}</span>
                             <span class="performance-label">${performanceText}</span>
                         </div>
                         <div class="cell-winrate">
-                            <span class="winrate-main">${winRate}%</span>
+                            <span class="winrate-main" style="color:${cellColor}">${winRate}%</span>
                             <div class="winrate-bar">
                                 <div class="winrate-fill" style="width: ${winRate}%; background: linear-gradient(90deg, ${cellColor}80, ${cellColor});"></div>
                             </div>
@@ -2026,7 +2008,14 @@ function displayDetailedResults() {
     };
     
     if (detailsList) {
-        let html = '<div class="detail-header-enhanced">';
+        // Add enhanced header
+        let html = createEnhancedTableHeader('detailed');
+        
+        // Add detailed results content
+        html += '<div class="detailed-results-container">';
+        
+        // Table header
+        html += '<div class="detail-header-enhanced">';
         html += '<div class="detail-col-matchup"><span>🥊</span><span>Matchup Details</span></div>';
         html += '<div class="detail-col-stat"><span>🏆</span><span>Wins</span></div>';
         html += '<div class="detail-col-stat"><span>💔</span><span>Losses</span></div>';
@@ -2034,11 +2023,11 @@ function displayDetailedResults() {
         html += '<div class="detail-col-stat"><span>📈</span><span>Win Rate</span></div>';
         html += '</div>';
         
-        // Group by X strategy for better organization
+        // Group by X strategy
         strategies.forEach(strategy1 => {
             const info1 = strategyInfo[strategy1];
             
-            // Add strategy section header
+            // Strategy section header
             html += `<div class="strategy-section-header" style="border-left: 4px solid ${info1.color};">
                 <span class="section-icon">${info1.icon}</span>
                 <strong>${strategy1.charAt(0).toUpperCase() + strategy1.slice(1)} as X Player (First Move)</strong>
@@ -2081,9 +2070,102 @@ function displayDetailedResults() {
             });
         });
         
+        html += '</div>';
+        
         detailsList.innerHTML = html;
     }
 }
+
+const TABLE_HEADERS = {
+    rankings: {
+        icon1: '🏆',
+        icon2: '👑',
+        title: 'Strategy Performance Rankings',
+        subtitle: 'Overall Win Rate Analysis',
+        description: 'Comprehensive ranking of AI strategies based on win rates across all matchups. Higher win rates indicate more effective strategies.',
+        playerInfo: {
+            show: false
+        }
+    },
+    
+    winTypes: {
+        icon1: '🎯',
+        icon2: '🏹',
+        title: 'Victory Pattern Analysis',
+        subtitle: 'How Each Strategy Achieves Victory',
+        description: 'Detailed breakdown of how each strategy wins: through horizontal/vertical lines, diagonal lines, or 2×2 squares.',
+        playerInfo: {
+            show: false
+        }
+    },
+    
+    matrix: {
+        icon1: '⚔️',
+        icon2: '🏆',
+        title: 'Head-to-Head Win Rate Matrix',
+        subtitle: 'Direct Strategy Confrontations',
+        description: 'Win rates for each strategy matchup. X players (rows) move first, O players (columns) move second.',
+        playerInfo: {
+            show: true,
+            xLabel: 'X Players (First Move)',
+            oLabel: 'O Players (Second Move)',
+            note: 'Each cell shows X player\'s win rate against O player'
+        }
+    },
+    
+    detailed: {
+        icon1: '📊',
+        icon2: '📈',
+        title: 'Comprehensive Match Results',
+        subtitle: 'Complete Statistical Breakdown',
+        description: 'Detailed win/loss/draw statistics for every strategy combination, organized by X player strategy.',
+        playerInfo: {
+            show: false
+        }
+    }
+};
+
+// Create enhanced header HTML
+function createEnhancedTableHeader(headerType) {
+    const config = TABLE_HEADERS[headerType];
+    if (!config) return '';
+    
+    let html = '<div class="enhanced-table-header">';
+    
+    // Main title section with gradient background
+    html += '<div class="header-title-section">';
+    html += '<div class="header-main-title">';
+    html += `<span class="header-icon">${config.icon1}</span>`;
+    html += `<h3 class="header-title-text">${config.title}</h3>`;
+    html += `<span class="header-icon">${config.icon2}</span>`;
+    html += '</div>';
+    
+    // Subtitle
+    html += `<div class="header-subtitle">${config.subtitle}</div>`;
+    html += '</div>';
+    
+    // Description section
+    html += '<div class="header-description">';
+    html += `<div class="description-text">${config.description}</div>`;
+    html += '</div>';
+    
+    // Player info section (for matrix table)
+    if (config.playerInfo.show) {
+        html += '<div class="header-player-info">';
+        html += '<div class="player-indicators">';
+        html += `<div class="x-player-indicator">🔴 ${config.playerInfo.xLabel}</div>`;
+        html += '<div class="vs-divider">VS</div>';
+        html += `<div class="o-player-indicator">🔵 ${config.playerInfo.oLabel}</div>`;
+        html += '</div>';
+        html += `<div class="reading-guide">💡 <em>${config.playerInfo.note}</em></div>`;
+        html += '</div>';
+    }
+    
+    html += '</div>';
+    
+    return html;
+}
+
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
