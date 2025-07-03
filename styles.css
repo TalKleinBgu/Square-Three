@@ -484,6 +484,18 @@
     font-weight: 500;
     font-style: italic;
 }
+
+#statisticsSettings {
+    text-align: center;
+}
+#statisticsSettings .mode-btn {
+    margin: 5px;
+    display: inline-block;
+}
+/* #fullStatsBtn, #stopStatsBtn {
+    margin: 10px auto;
+    display: inline-block;
+} */
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     .strategy-header-row,
