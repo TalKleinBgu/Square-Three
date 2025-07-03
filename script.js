@@ -349,6 +349,23 @@ document.addEventListener('DOMContentLoaded', function() {
             startTutorial();
         }, 1000); // דיליי של שנייה אחרי טעינת הדף
     }
+    setTimeout(() => {
+        // עדכון כל ה-depth selects ל-2
+        const depthSelects = [
+            'aiDifficultySelect',
+            'sharedDepthSelect', 
+            'testDepthSelect'
+        ];
+        
+        depthSelects.forEach(selectId => {
+            const customSelect = document.getElementById(selectId);
+            if (customSelect && customSelect.customSelectInstance) {
+                customSelect.customSelectInstance.setValue('2');
+            }
+        });
+        
+        console.log('Default values set to depth 2');
+    }, 100);
 });
 // Evaluation Functions
 function evalMaterial(game, me, opp) {
@@ -884,9 +901,9 @@ let game;
 let currentPlayer = 'X';
 let gameMode = 'human'; // 'human', 'ai', 'aivsai', or 'statistics'
 let gameEnded = false;
-let aiDifficulty = 4;
+let aiDifficulty = 2;
 let aiStrategy = 'pattern';
-let sharedDepth = 4;
+let sharedDepth = 2;
 let aiXStrategy = 'aggressive';
 let aiOStrategy = 'defensive';
 let aiVsAiRunning = false;
@@ -902,7 +919,7 @@ let fullStatsData = {
     totalCombos: 0,
     currentGameInCombo: 0,
     gamesPerCombo: 10,
-    testDepth: 4
+    testDepth: 2
 };
 
 // Strategy descriptions
@@ -1025,14 +1042,13 @@ function setGameMode(mode) {
     if (event && event.target) {
         event.target.classList.add('active');
     }
-    const hotBlockingLabel = document.getElementById('hotBlockingLabel');
-    if (hotBlockingLabel){
-        hotBlockingLabel.style.display = (mode === 'human') ? 'inline-block' : 'none';
-    }
     const hotBlockingContainer = document.getElementById('hotBlockingContainer');
     if (hotBlockingContainer) {
-        // מוצג רק ב-Human vs Human
-        hotBlockingContainer.style.display = (mode === 'human') ? 'block' : 'none';
+        if (mode === 'human') {
+            hotBlockingContainer.style.display = 'flex'; // הצג רק ב-Human vs Human
+        } else {
+            hotBlockingContainer.style.display = 'none'; // הסתר בשאר המצבים
+        }
     }
     // const hotBlockingContainer = document.getElementById('hotBlockingContainer');
     // if (hotBlockingContainer) hotBlockingContainer.style.display = 'block';
@@ -1096,6 +1112,14 @@ function setGameMode(mode) {
             if (hotBlockingContainer) hotBlockingContainer.style.display = 'block';
             if (gameActions) gameActions.style.display = 'flex'; // הוסף את זה
             if (spacer) spacer.remove();
+                    // הצג את ה-Hot Blocking רק ב-Human vs Human
+            if (hotBlockingContainer) {
+                if (mode === 'human') {
+                    hotBlockingContainer.style.display = 'flex';
+                } else {
+                    hotBlockingContainer.style.display = 'none';
+                }
+            }
             
             gameControls.classList.remove('hidden');
         }
@@ -1303,7 +1327,7 @@ function makeMove(index) {
 }
 
 function startAiVsAi() {
-    console.log("Starting AI vs AI..."); // לבדיקה
+    console.log("Starting AI vs AI...");
 
     if (gameEnded) {
         resetGame();
@@ -1313,15 +1337,15 @@ function startAiVsAi() {
     aiVsAiPaused = false;
     
     const pauseBtn = document.getElementById('pauseBtn');
-    const sharedDepthSelect = document.getElementById('sharedDepth');
-    const aiXStrategySelect = document.getElementById('aiXStrategy');
-    const aiOStrategySelect = document.getElementById('aiOStrategy');
     
     if (pauseBtn) pauseBtn.style.display = 'inline-block';
     
-    if (sharedDepthSelect) sharedDepth = parseInt(sharedDepthSelect.value);
-    if (aiXStrategySelect) aiXStrategy = aiXStrategySelect.value;
-    if (aiOStrategySelect) aiOStrategy = aiOStrategySelect.value;
+    // קריאה נכונה מ-custom selects במקום להשתמש בערכי ברירת המחדל
+    sharedDepth = parseInt(getSelectValue('sharedDepth')) || 2;
+    aiXStrategy = getSelectValue('aiXStrategy') || 'aggressive';
+    aiOStrategy = getSelectValue('aiOStrategy') || 'defensive';
+    
+    console.log(`Using depth: ${sharedDepth}, X: ${aiXStrategy}, O: ${aiOStrategy}`);
     
     // Reinitialize game to apply current hot blocking setting
     initGame();
@@ -1404,13 +1428,13 @@ function runAiVsAi(fastMode = false) {
 // Full Statistics Functions
 function startFullStatistics() {
     fullStatsRunning = true;
-    const gamesPerCombo = parseInt(document.getElementById('gamesPerCombo').value);
-    const testDepth = parseInt(document.getElementById('testDepth').value);
-    
+    const gamesPerCombo = parseInt(getSelectValue('gamesPerCombo')) || 10;
+    const testDepth = parseInt(getSelectValue('testDepth')) || 2;
     // Initialize full stats data
     fullStatsData.gamesPerCombo = gamesPerCombo;
     fullStatsData.testDepth = testDepth;
     fullStatsData.results = {};
+    fullStatsData.winTypes = {};
     fullStatsData.currentCombo = 0;
     fullStatsData.currentGameInCombo = 0;
     
@@ -2134,10 +2158,11 @@ document.addEventListener('DOMContentLoaded', function() {
         gameContainer.style.transform = 'translateY(50px) scale(0.95)';
         
         setTimeout(() => {
-            gameContainer.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-            gameContainer.style.opacity = '1';
-            gameContainer.style.transform = 'translateY(0) scale(1)';
-        }, 100);
+            console.log('AI Difficulty:', getSelectValue('aiDifficulty'));
+            console.log('Shared Depth:', getSelectValue('sharedDepth'));
+            console.log('AI X Strategy:', getSelectValue('aiXStrategy'));
+            console.log('AI O Strategy:', getSelectValue('aiOStrategy'));
+        }, 1000);
     }
     
     // Add hover sound effects (visual feedback)
@@ -2685,10 +2710,10 @@ function setSelectValue(selectId, value) {
 }
 
 // Override existing select access methods for compatibility
-window.getAiDifficulty = () => getSelectValue('aiDifficulty') || '4';
+window.getAiDifficulty = () => getSelectValue('aiDifficulty') || '2';
 window.getAiStrategy = () => getSelectValue('aiStrategy') || 'pattern';
-window.getSharedDepth = () => getSelectValue('sharedDepth') || '4';
+window.getSharedDepth = () => getSelectValue('sharedDepth') || '2';
 window.getAiXStrategy = () => getSelectValue('aiXStrategy') || 'aggressive';
 window.getAiOStrategy = () => getSelectValue('aiOStrategy') || 'defensive';
-window.getTestDepth = () => getSelectValue('testDepth') || '4';
+window.getTestDepth = () => getSelectValue('testDepth') || '2';
 window.getGamesPerCombo = () => getSelectValue('gamesPerCombo') || '10';
