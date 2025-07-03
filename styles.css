@@ -354,23 +354,25 @@
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 1.3rem;
+    font-size: 1rem;            /* was 1.3rem */
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 26px 14px;     /* יותר גובה וריווח */
-    min-height: 110px;      /* אופציונלי: לשמור על ריבוע יפה */
+    padding: 16px 24px;          /* Match matrix-cell-enhanced-clean padding */
+    min-height: 70px;           /* was 110px */
 }
 
 .matrix-header-enhanced {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
-    padding: 20px 10px;  
+    padding: 12px 6px;          /* was 20px 10px */
     border-radius: 12px;
     border: 2px solid rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
-    min-height: 100px;     /* תן לה לגדול אנכית */
+    min-height: 65px;           /* was 100px */
+    min-height: auto;           /* Remove fixed height */
+    height: auto;               /* Let it size naturally */
 }
 
 
@@ -382,7 +384,136 @@
     position: relative;
     z-index: 1;
 }
+/* Strategy and Opponent Row Styles */
+.strategy-header-row {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+    font-weight: 700;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+}
 
+.strategy-total-row {
+    background: rgba(255, 255, 255, 0.2);
+    margin-bottom: 0 !important;
+    border-radius: 12px 12px 0 0 !important;
+        display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1.2fr;
+    gap: 12px;
+    align-items: center;
+    text-align: center;        /* Add this */
+
+}
+
+.strategy-total-row .strategy-section-header {
+    padding: 0;
+    margin: 0;
+    background: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.opponent-header {
+    background: rgba(255, 255, 255, 0.15);
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.opponent-row {
+    border-radius: 0 !important;
+    margin-bottom: 1px !important;
+    background: rgba(255, 255, 255, 0.1);
+    
+}
+
+.opponent-row:last-of-type {
+    border-radius: 0 0 12px 12px !important;
+}
+
+.opponent-row .detail-col-matchup {
+    padding-left: 20px;
+}
+
+.strategy-total-row .stat-wins,
+.strategy-total-row .stat-losses,
+.strategy-total-row .stat-draws {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 2px;           /* Add small top margin */
+}
+
+.strategy-total-row .stat-wins {
+    color: #34C759;
+}
+
+.strategy-total-row .stat-losses {
+    color: #FF3B30;
+}
+
+.strategy-total-row .stat-draws {
+    color: #FF9500;
+}
+
+.strategy-total-row .winrate-value {
+    font-size: 20px;
+    font-weight: 800;
+    margin-top: 2px;           /* Add small top margin */
+}
+.strategy-total-row .winrate-label {
+    font-size: 14px;
+    margin-bottom: 2px;        /* Add small bottom margin */
+}
+.winrate-label {
+    font-size: 20px;            /* add this for "Win Rate" label */
+}
+.strategy-total-row .mini-bar {
+    width: 80px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.strategy-section-header::after {
+    content: " - Playing as X";
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: 500;
+    font-style: italic;
+}
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .strategy-header-row,
+    .strategy-total-row,
+    .opponent-header,
+    .opponent-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px;
+    }
+    
+    .strategy-total-row .strategy-section-header {
+        margin-bottom: 12px;
+        justify-content: center;
+    }
+    
+    .strategy-total-row .detail-col-stat,
+    .opponent-row .detail-col-stat {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .opponent-row .detail-col-matchup {
+        padding-left: 0;
+        justify-content: center;
+    }
+}
 .matrix-cell-enhanced-clean {
     background: rgba(255,255,255,0.15);   /* neutral glassy look */
     border: 2px solid transparent; 
@@ -397,9 +528,9 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    font-size: 1.05rem;          
+    font-size: 0.8rem;          /* was 0.9rem */
     line-height: 1.25;
-    padding: 18px 10px;
+    padding: 12px 6px;          /* was 18px 10px */
     background-clip:padding-box;     
     /* --accent:#ffffff80;               */
 
@@ -450,6 +581,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     align-items: center;
     backdrop-filter: blur(10px);
+    
 }
 
 .detail-col-matchup { 
@@ -465,7 +597,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 600;
 }
 
@@ -617,7 +749,7 @@
     .matrix-table-enhanced {
         grid-template-columns: 1.5fr repeat(5, 0.8fr);
         font-size: 11px;
-        gap: 6px;
+        gap: 4px;
         padding: 12px;
     }
     
@@ -2140,6 +2272,120 @@ input:checked + .slider:before {
     display: none;
 }
 
+/* שורה של כותרת אסטרטגיה + 5 כותרות עמודה */
+.strategy-section-row{
+    display:grid;
+    grid-template-columns: 2fr repeat(5,1fr); /* תא שמאלי רחב + 5 עמודות שוות */
+    align-items:center;
+    gap:18px;
+    margin-top:28px;
+    padding:12px 20px;
+    border-radius:14px;
+    background:rgba(255,255,255,.55);
+}
+
+/* כל תא (גם תא הכותר וגם הסטטיסטיקות) */
+.strategy-section-header,
+.detail-col-matchup,
+.detail-col-stat{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+    font-weight:600;
+}
+
+/* Strategy Section Row Styles */
+.strategy-section-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1.2fr;
+    gap: 12px;
+    align-items: center;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.strategy-section-row .strategy-section-header {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+}
+
+.strategy-section-row .detail-col-stat {
+    text-align: center;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.strategy-section-row .winrate-value {
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.9);
+    font-weight: 800;
+}
+
+.strategy-section-row .mini-bar {
+    width: 80px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.strategy-section-row .stat-wins {
+    color: #34C759;
+    font-size: 16px;
+}
+
+.strategy-section-row .stat-losses {
+    color: #FF3B30;
+    font-size: 16px;
+}
+
+.strategy-section-row .stat-draws {
+    color: #FF9500;
+    font-size: 16px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .strategy-section-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px;
+    }
+    
+    .strategy-section-row .strategy-section-header {
+        margin-bottom: 12px;
+        justify-content: center;
+    }
+    
+    .strategy-section-row .detail-col-stat {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .strategy-section-row .detail-col-stat:before {
+        content: attr(data-label);
+        font-weight: 500;
+    }
+}
 /* ==========================================
    STATISTICS TABLES
    ========================================== */
@@ -2310,7 +2556,7 @@ input:checked + .slider:before {
 }
 
 .strategy-icon {
-    font-size: 2.2rem;     
+    font-size: 1.6rem;          /* was 2.2rem */
     line-height: 1;        /* שלא יתפצל לשתי שורות */
 }
 
@@ -2327,7 +2573,7 @@ input:checked + .slider:before {
 
 .strategy-header-role {
     display: block;
-    font-size: .7rem;
+    font-size: 0.6rem;          /* was 0.7rem */
     color: rgba(0, 0, 0, 0.6);
     font-weight: 600;
     margin-top: 2px;
@@ -2367,7 +2613,7 @@ input:checked + .slider:before {
 }
 
 .performance-label {
-    font-size: .75em;
+    font-size: .85em;
     font-weight: 600;
     letter-spacing: 0.02em;
     color: rgba(0, 0, 0, 0.7);
@@ -2427,12 +2673,19 @@ input:checked + .slider:before {
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
+.matrix-cell-enhanced-clean.dominant  .performance-label { color:#34C759; } /* 🔥 */
+.matrix-cell-enhanced-clean.excellent .performance-label { color:#00CFFF; } /* ✨ */
+.matrix-cell-enhanced-clean.good      .performance-label { color:#4A90E2; } /* 👍 */
+.matrix-cell-enhanced-clean.balanced  .performance-label { color:#808080; } /* ⚖️ */
+.matrix-cell-enhanced-clean.struggling .performance-label{ color:#FF9500; } /* 😔 */
+.matrix-cell-enhanced-clean.dominated .performance-label{ color:#FF3B30; } /* 💔 */
+.matrix-cell-enhanced-clean.mirror    .performance-label{ color:#9B59B6; } /* 🪞 */
 
 .matrix-legend h4 {
     margin: 0 0 12px 0;
     text-align: center;
     color: rgba(0, 0, 0, 0.8);
-    font-size: 16px;
+    font-size: 22px;
     font-weight: 600;
 }
 
@@ -2441,17 +2694,17 @@ input:checked + .slider:before {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     flex-wrap:nowrap;      /* אל תגלוש לשורה חדשה */
 
-    gap: 8px;
+    gap: 4px;                   /* was 6px */
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
+    padding: 6px 8px;           /* was 8px 12px */
     background: rgba(255, 255, 255, 0.15);
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 12px;            /* was 15px */
     font-weight: 500;
     color: rgba(0, 0, 0, 0.7);
     /* transition: background 0.2s ease; */
@@ -2462,7 +2715,7 @@ input:checked + .slider:before {
 }
 
 .legend-icon {
-    font-size: 14px;
+    font-size: 16px;
 }
 
 /* ==========================================
@@ -2869,8 +3122,14 @@ input:checked + .slider:before {
     border: 2px solid rgba(255, 255, 255, 0.4);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     align-items: center;
+    font-size: 26px;            /* was 14px */
+    text-align: center;        /* Add this */
 }
-
+.detail-header-enhanced .detail-col-stat {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
 .detail-col-matchup { 
     text-align: left;
     display: flex;
@@ -2884,7 +3143,7 @@ input:checked + .slider:before {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    font-size: 14px;
+    font-size: 20px;
     font-weight: 600;
 }
 
@@ -2900,10 +3159,11 @@ input:checked + .slider:before {
     gap: 8px;
     border-left-width: 4px;
     border-left-style: solid;
+    
 }
 
 .section-icon {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 .detail-item-enhanced {
@@ -2983,12 +3243,12 @@ input:checked + .slider:before {
 }
 
 .performance-icon {
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .winrate-value {
     font-weight: 700;
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .mini-bar {
@@ -4055,6 +4315,7 @@ div[style*="text-align: center; margin-top: 20px"] {
 .rankings-content,
 .win-types-table-container,
 .detailed-results-container {
+    font-size: 20px;            /* was inherited smaller */
     position: relative;
     z-index: 1;
 }
